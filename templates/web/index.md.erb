@@ -1,0 +1,178 @@
+% render "layouts/basic.html" do
+
+%# HTML tags can be embedded in mark down files if you want to do specific custom
+%# formatting like this, but in most cases that is not required.
+<h1><%= RGen.config.name %> <span style="font-size: 14px">(<%= RGen.app.version %>)</span></h1>
+
+### Purpose
+
+This library provides an RGen API to use the Nexus protocol.
+
+This library supports Read/Write Access of system memory mapped resources,
+including IPS mapped registers via the conventional RGen Register API.
+
+
+### How To Import
+
+Add the following to your <code>config/application.rb</code> file to import
+this library:
+
+~~~ruby
+config.imports = [
+  {
+    :vault => "<%= RGen.config.vault %>",
+    :version => "<%= RGen.app.version %>",
+  }
+]
+~~~
+
+### How To Use
+
+Include the <code>Nexus</code> module to add a Nexus driver to your class and
+define the required pins,
+normally the pins would be an alias to existing DUT pins and therefore the
+driver cannot assume them.
+
+%#Including the module adds a <code>nexus</code> method which will return an instance of
+%#[<code>Nexus::Driver</code>](<%= path "api/Nexus/Driver.html" %>).
+Including the module adds a <code>nexus</code> method which will return an instance of
+<code>Nexus::Driver</code>.
+
+The driver provides <code>read_register</code> and <code>write_register</code>
+methods that allow the driver to be easily hooked into the RGen register API.
+Here is an example integration:
+
+~~~ruby
+class Panther2
+
+  include Nexus
+
+  include RGen::Pins
+  include RGen::Registers
+
+  def initialize
+    # Add these required pins (or an alias is fine)
+    add_pin :tclk
+    add_pin :tdi
+    add_pin :tdo
+    add_pin :tms
+
+    add_reg32 :testme32, 0x007a, :portA => {pos: 8, bits: 8},
+                                 :portB => {pos: 16, bits: 16},
+                                 :enable => {pos: 0}
+
+  end
+
+  # Hook the Nexus module into the register API, any register read
+  # requests will use the Nexus by default
+  def read_register(reg, options={})
+    nexus.read_register(reg, options)
+  end
+
+  # As above for write requests
+  def write_register(reg, options={})
+    nexus.write_register(reg, options)
+  end
+
+
+end
+
+Panther2.new.reg(:testme32).write!(0x55AA55AA)  # => Will perform the write using the Nexus protocol
+
+Panther2.new.reg(:testme32).bits(:portA).read!(0xAA)  # => Only the portA bits will be read
+~~~
+
+Access to the underlying [JTAG](http://rgen.freescale.net/jtag/) hardware
+driver:
+
+~~~ruby
+nexus.jtag    # => an instance of JTAG::Driver
+~~~
+
+The address can be overridden:
+
+~~~ruby
+# Transform the default register address
+nexus.write_register(reg, :address => reg.address << 2)
+~~~
+
+The driver will also accept flat data values in place of a register.
+
+This can also be used to write to any IPS memory mapped location, even if not a register!
+
+~~~ruby
+# Write 0x1234 to IPS address 0x12
+nexus.write(0x1234, :address => 0x12)
+
+# Read and expect 0x1234 from IPS address 0x12
+nexus.read(0x1234, :address => 0x12)
+~~~
+
+
+### How To Setup a Development Environment
+
+~~~
+mkdir nexus
+cd nexus
+dssc setvault <%= RGen.app.config.vault %> .
+dssc pop -rec -get .
+~~~
+
+Some patterns can be found in the pattern directory to exercise the protocol.
+
+Follow the instructions here if you want to make a 3rd party app
+workspace use your development copy of the Nexus library:
+[Setting up a Library Development Environment](http://rgen.freescale.net/rgen/latest/guides/libraries/environment)
+
+This library also contains a test suite, makes sure this passes before committing
+any changes!
+
+~~~
+rgen examples
+rgen specs
+~~~
+
+%# * [Docs](<%= path "/docs/environment/introduction" %>)
+%#
+%#### Code Examples
+%#
+%# In the course of writing documentation you will probably want to show code examples
+%# from time to time. Generic code snippets can be easily formatted with a mono-spaced
+%# font like this:
+%# 
+%# ~~~
+%# rgen t debug
+%# rgen g list/production.list
+%# ~~~
+%#
+%# If you are showing examples of Ruby then they can be easily syntax-highlighted for
+%# better presentation:
+%#
+%# ~~~ruby
+%# # Cool, this is easy
+%# def some_ruby
+%#   @blah = Blah.new
+%# end
+%# ~~~
+%#
+%# RGen uses the Coderay library for syntax highlighting and therefore should in theory
+%# be able to highlight all languages listed here: [CodeRay Syntax Highlighting](http://coderay.rubychan.de/)
+%# 
+%# ### Custom HTML
+%# 
+%# You may occasionally wish to have low level control of your documentation's HTML, this
+%# can be done by simply embedding the HTML directly alongside the Markdown.
+%#
+%# RGen already uses the [Twitter Bootstrap](http://twitter.github.io/bootstrap/index.html)
+%# framework to generate these documents, so you already have full access to the features
+%# provided by that framework.
+%# 
+%# For example here is how to insert a [Bootstrap alert](http://twitter.github.io/bootstrap/components.html#alerts):
+%# 
+%# 
+%# <div class="alert">
+%#   <button type="button" class="close" data-dismiss="alert">&times;</button>
+%#   <strong>Warning!</strong> This example was just copied directly from the bootstrap documentation!
+%# </div>
+
+% end
