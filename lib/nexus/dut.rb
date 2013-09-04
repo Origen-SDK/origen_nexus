@@ -22,9 +22,15 @@ module Nexus
 
       # Define dummy register to use to test Nexus
       # driver for test purposes
-      add_reg32 :testme32, 0x007a, :portA => {pos: 8, bits: 8},
-                                   :portB => {pos: 16, bits: 16},
-                                   :enable => {pos: 0}
+      add_reg32 :testme32, 0x007a,   :enable => {pos: 0},
+                                     :portA =>  {pos: 8, bits: 8},
+                                     :portB =>  {pos: 16, bits: 16}
+
+      add_reg32 :status32, 0x007b,   :error_bit => {pos: 0, bits: 1, writable: false},
+                                     :fail_vals => {pos: 16, bits: 16, writable: false}
+
+      add_reg :testme16, 0x007c, 16, :portC => {pos: 0, bits: 8},
+                                     :portD => {pos: 8, bits: 8}
     end
 
 

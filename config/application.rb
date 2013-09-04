@@ -21,14 +21,14 @@ class Nexus_Application < RGen::Application
   config.imports = [
     {
       :vault => "sync://sync-15088:15088/Projects/common_tester_blocks/rgen_blocks/physical/JTAG/tool_data/rgen",
-      :version => "v0.3.0",
+      :version => "v0.5.1",
     }
   ]
 
   # Specify min/max versions of rgen that must be used with this application, rgen
   # will then enforce that every user's rgen version is correct at runtime
-  config.min_required_rgen_version = "v2.0.1.dev100"
-  config.max_required_rgen_version = "v2.0.1.dev100"
+  config.min_required_rgen_version = "v2.0.1.dev103"
+  config.max_required_rgen_version = "v2.0.1.dev103"
 
   # You can map moo numbers to targets here, this allows targets to be selected via
   # rgen t <moo>

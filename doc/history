@@ -1,3 +1,15 @@
+## Tag: v0.0.0.dev2
+
+##### Branch: 'Trunk'
+
+##### by Daniel Hadad on 04-Sep-2013 11:42AM
+
+
+Updated to natively use read, overlay and store capability built in to register class.
+Added better support for undefined registers.
+Updated to pass messages/comments on to JTAG plug-in.
+Updated to use JTAG v0.5.1 and RGen core v2.0.1.dev103.
+
 ## Tag: v0.0.0.dev1
 
 ##### Branch: 'Trunk'

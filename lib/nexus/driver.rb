@@ -69,9 +69,6 @@ module Nexus
     def define_nexus_registers
       # Each register has a Nexus Opcode, which we will use as 'address' below, and 
       #  corresponding read addresses and write addresses
-      #  DDHH not sure yet how to use the latter yet
-      #DDHH address of the register depends on whether you are writing to it or reading it!
-
 
       # RWCS - Read/Write Access Control Register
       #        read addr = 0x0E, write addr = 0x0F
@@ -109,83 +106,73 @@ module Nexus
     #
     def enable_nexus_access
       if @ir_reg_value != once_nexus_access_instr
-        log "Enable Nexus Access: OnCE_Send(#{once_ocmd_width}, 0x%02X)" % [ once_nexus_access_instr ]
-        jtag.write_ir once_nexus_access_instr, :size => once_ocmd_width
+        jtag.write_ir once_nexus_access_instr, :size => once_ocmd_width, :msg => log2("Enable Nexus Access: OnCE_Send(#{once_ocmd_width}, 0x%02X)" % [ once_nexus_access_instr ])
         @ir_reg_value = once_nexus_access_instr
       end
       if block_given?
         yield
         disable_once
-      end
+      end  # whether to mark all bits in RWD for read
     end
 
     # Disable OnCE
     def disable_once
       if @ir_reg_value != once_bypass_instr
-        log "Bypass OnCE: OnCE_Send(#{once_ocmd_width}, 0x%02X)" % [ once_bypass_instr ]
-        jtag.write_ir once_bypass_instr, :size => once_ocmd_width
+        jtag.write_ir once_bypass_instr, :size => once_ocmd_width, :msg => log2("Bypass OnCE: OnCE_Send(#{once_ocmd_width}, 0x%02X)" % [ once_bypass_instr ])
         @ir_reg_value = once_bypass_instr
       end
     end
 
     # Write a given Nexus register
-    def write_nexus_register(id, options={})
-      options = { :reg_data => :default, # default use value from register itself
-                  :write => true,        # whether to write or read
+    def write_nexus_register(reg_or_val, options={})
+      options = { :write => true,        # whether to write or read
                 }.merge(options)
 
-      if reg(id).respond_to?(:address)
-        addr = reg(id).address
-        if options[:write] then addr = addr + 1 end # offset address by 1 since writing
-        size = reg(id).size         # get size of register
-        if options[:reg_data] == :default
-          data = reg(id).data
-        else
-          data = options[:reg_data]
-        end
-      else
-        raise "ERROR! Invalid register passed to write_nexus_register\n"
-      end
+      addr = exact_address(reg_or_val, options)
+      if options[:write] then addr = addr + 1 end # offset address by 1 since writing
+      data = exact_data(reg_or_val, options)
+      size = exact_size(reg_or_val, options)
+      name = exact_name(reg_or_val, options)
 
       if options[:write]
-        log "Write Nexus Reg: #{id.to_s.upcase} at 0x%04X with 0x%08X" % [ addr, data ]
+        log "Write Nexus Reg: #{name.upcase} at 0x%04X with 0x%08X" % [ addr, data ]
       else
-        log "Read Nexus Reg: #{id.to_s.upcase} at 0x%04X with 0x%08X" % [ addr, data ]
+        log "Read Nexus Reg: #{name.upcase} at 0x%04X with 0x%08X" % [ addr, data ]
       end
 
       # first pass : select register via nexus command
-      log "OnCE_Send(#{nexus_command_width}, 0x%02X)" % [ addr ]
-      jtag.write_dr addr, :size => nexus_command_width
+      jtag.write_dr addr, :size => nexus_command_width, :msg => log2("OnCE_Send(#{nexus_command_width}, 0x%02X)" % [ addr ])
 
       if options[:write]
         # second pass : pass data to register
-        log "OnCE_Send(#{size}, 0x%08X)" % [ data ]
-        jtag.write_dr data, :size => size
+        jtag.write_dr reg_or_val, :size => size, :msg => log2("OnCE_Send(#{size}, 0x%08X)" % [ data ])
       else
         # second pass : read data from register
-        log "OnCE_Read(#{size}, 0x%08X)" % [ data ]
-        jtag.read_dr data, :size => size
+       jtag.read_dr(reg_or_val, :size => size, :msg => log2("OnCE_Read(#{size}, 0x%08X)" % [ data ]))
       end
 
     end
 
     # Read a given Nexus register
-    def read_nexus_register(id, options={})
-      write_nexus_register(id, options.merge(:write => false))
+    def read_nexus_register(reg_or_val, options={})
+      write_nexus_register(reg_or_val, options.merge(:write => false))
     end
 
 
     # Write a memory-mapped resource
     # for now only supports 32-bit data
     def single_write_access(address, data, options={})
-      options={:write => true,    # whether to write or read the register
+      options={:write => true,          # whether to write or read the register
+               :undef => true,          # whether IPS being accessed is a register or undefined
+                                        # default: assume not a real register
               }.merge(options)
 
       enable_nexus_access
 
       # Send command to write RWA reg
       # Send address value to RWA reg 
-      write_nexus_register(:rwa, :reg_data => address)
+      reg(:rwa).write(address)
+      write_nexus_register(reg(:rwa))
 
       # Send command to write RWCS reg
       # Send settings to RWCS
@@ -197,16 +184,22 @@ module Nexus
       reg(:rwcs).bits(:cnt).write(1)      # single access
       reg(:rwcs).bits(:err).write(0)      # read/write access error
       reg(:rwcs).bits(:dv).write(0)       # read/write access data valid
-      write_nexus_register(:rwcs)
+      write_nexus_register(reg(:rwcs))
 
       if options[:write]
         # Send command to write RWD reg
         # Send data value to be written to RWD reg
-        write_nexus_register(:rwd, :reg_data => data)
+        reg(:rwd).write(data)
+        write_nexus_register(reg(:rwd))
       else 
+        # If undefined reg, then mark all bits for read
+        if options[:undef] 
+          reg(:rwd).read
+        end
         # Send command to read RWD reg
         # Read RWD reg value
-        read_nexus_register(:rwd, :reg_data => data)
+        reg(:rwd).write(data)
+        read_nexus_register(reg(:rwd))
       end
 
     end
@@ -215,6 +208,41 @@ module Nexus
     # for now only supports 32-bit data
     def single_read_access(address, data, options={})
       single_write_access(address, data, options.merge(:write => false))
+    end
+
+#    def test_read_flag(reg_to_check)
+#      reg_to_check.size.times do |i|
+#        if reg_to_check.bit(i).is_to_be_read? 
+#          print "\t\tBIT #{i} of #{reg_to_check.name.upcase} has read flag!\n"
+#        else
+#          print "\t\tBIT #{i} of #{reg_to_check.name.upcase} DOES NOT HAVE read flag!\n"
+#        end  
+#      end
+#    end
+#
+#    def test_store_flag(reg_to_check)
+#      reg_to_check.size.times do |i|
+#        if reg_to_check.bit(i).is_to_be_stored? 
+#          print "\t\tBIT #{i} of #{reg_to_check.name.upcase} has store flag!\n"
+#        else
+#          print "\t\tBIT #{i} of #{reg_to_check.name.upcase} DOES NOT HAVE store flag!\n"
+#        end  
+#      end
+#    end
+#
+#    def test_overlay_flag(reg_to_check, options={})
+#      options={:msg => ""}.merge(options)
+#      reg_to_check.size.times do |i|
+#        if reg_to_check.bit(i).has_overlay? 
+#          print "\t\t#{options[:msg]}: BIT #{i} of #{reg_to_check.name.upcase} has overlay flag!\n"
+#        else
+#          print "\t\t#{options[:msg]}: BIT #{i} of #{reg_to_check.name.upcase} DOES NOT HAVE overlay flag!\n"
+#        end  
+#      end
+
+    # determines whether real register or not
+    def real_reg?(reg_or_val)
+      reg_or_val.respond_to?(:name)
     end
 
     # Write the given register (or system memory location) or given value to a specified address
@@ -232,14 +260,30 @@ module Nexus
               }.merge(options)
       address = exact_address(reg_or_val, options)
       data = exact_data(reg_or_val, options)
+      size = exact_size(reg_or_val, options)
+      name = (exact_name(reg_or_val, options)).upcase
        
-      name = reg_or_val.respond_to?(:name) ? reg_or_val.name.upcase : "n/a"
       op = options[:write] ? "Write" : "Read"
+      
+      # Set undefined register flag to override option for simple_write_access below
+      options[:undef] = !real_reg?(reg_or_val)
+
+      # if reading a real register then need to handle copying over all data and flags
+      # undefined regs will be handled in lower function so that default is to treat
+      # as undefined reg (just simple accesses)
+      reg(:rwd).overlay(nil)  # clear overlay flags if there, as sticky
+      if real_reg?(reg_or_val)
+        reg(:rwd).copy_all(reg_or_val)
+      end
 
       cc "**************************** NEXUS REGISTER #{op.upcase} BEGIN ****************************"
       cc "- #{op} Register #{name}: addr: 0x%08X, data: 0x%08X\n" % [ address, data ] 
       single_write_access(address, data, options)
       cc "**************************** NEXUS REGISTER #{op.upcase} END ****************************"
+
+      # Clear flags so as to not affect subsequent reg reads/writes
+      reg(:rwd).clear_flags
+      reg_or_val.clear_flags if reg_or_val.respond_to?(:clear_flags)
     end
     alias :write :write_register
 
@@ -264,7 +308,7 @@ module Nexus
       address = options[:addr] || options[:address]
       unless address
         # if no address provided as option then use register address
-        if reg_or_val.respond_to?(:address)         # if register has :address property
+        if real_reg?(reg_or_val)             # if real register
           address = reg_or_val.address       # use register address
         else
           raise "An :address option must be supplied when not providing a register to Nexus!\n"
@@ -277,7 +321,7 @@ module Nexus
     # provided or if an address is provided
     def exact_data(reg_or_val, options={})
       # if no data provided as option then use register data
-      if reg_or_val.respond_to?(:data)     # if register has :data property
+      if real_reg?(reg_or_val)             # if real register
         data = reg_or_val.data             # use register value
       else
         data = reg_or_val                  # use reg_or_val passed as data
@@ -285,9 +329,34 @@ module Nexus
       data
     end
 
+    # Provide size of register if real register passed--
+    #  otherwise indicate number of bits of data value
+    def exact_size(reg_or_val, options={})
+      if real_reg?(reg_or_val)             # if real register
+        size = reg_or_val.size             # use register size  
+      else
+        size = reg_or_val.to_s(2).size     # get number of bits in value
+      end
+      size
+    end
 
+    # Provide name of register, if real register passed
+    # otherwise given 'undef' as name
+    def exact_name(reg_or_val, options={})
+      if real_reg?(reg_or_val)             # if real register
+        name = reg_or_val.name             # use register name  
+      else
+        name = "undef"                     # undefined register
+      end
+      name
+    end
+
+
+    def log2(msg)
+      "Nexus::Driver - #{msg}"
+    end
     def log(msg)
-      cc "Nexus::Driver - #{msg}"
+      cc "#{log2(msg)}"
     end
   end
 end

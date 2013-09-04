@@ -12,7 +12,7 @@ class Nexus_Application < RGen::Application
   MAJOR = 0
   MINOR = 0
   BUGFIX = 0
-  DEV = 1
+  DEV = 2
 
   VERSION = "v" + [MAJOR, MINOR, BUGFIX].join(".") + (DEV ? ".dev#{DEV}" : '')
 
