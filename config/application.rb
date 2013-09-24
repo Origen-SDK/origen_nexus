@@ -27,8 +27,8 @@ class Nexus_Application < RGen::Application
 
   # Specify min/max versions of rgen that must be used with this application, rgen
   # will then enforce that every user's rgen version is correct at runtime
-  config.min_required_rgen_version = "v2.0.1.dev103"
-  config.max_required_rgen_version = "v2.0.1.dev103"
+  config.min_required_rgen_version = "v2.0.1.dev104"
+  config.max_required_rgen_version = "v2.0.1.dev108"
 
   # You can map moo numbers to targets here, this allows targets to be selected via
   # rgen t <moo>

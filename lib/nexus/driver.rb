@@ -159,11 +159,12 @@ module Nexus
     end
 
 
-    # Write a memory-mapped resource
+    # Single Write to memory-mapped resource
     # for now only supports 32-bit data
     def single_write_access(address, data, options={})
       options={:write => true,          # whether to write or read the register
                :undef => true,          # whether IPS being accessed is a register or undefined
+               :count => 1,             # by default use single address access mode
                                         # default: assume not a real register
               }.merge(options)
 
@@ -178,12 +179,12 @@ module Nexus
       # Send settings to RWCS
       reg(:rwcs).bits(:ac).write(1)
       reg(:rwcs).bits(:rw).write(options[:write]? 1: 0)
-      reg(:rwcs).bits(:sz).write(0b010)   # word size = 32 bit
-      reg(:rwcs).bits(:map).write(0b000)  # map select = primary
-      reg(:rwcs).bits(:pr).write(0b11)    # priority = highest
-      reg(:rwcs).bits(:cnt).write(1)      # single access
-      reg(:rwcs).bits(:err).write(0)      # read/write access error
-      reg(:rwcs).bits(:dv).write(0)       # read/write access data valid
+      reg(:rwcs).bits(:sz).write(0b010)                 # word size = 32 bit
+      reg(:rwcs).bits(:map).write(0b000)                # map select = primary
+      reg(:rwcs).bits(:pr).write(0b11)                  # priority = highest
+      reg(:rwcs).bits(:cnt).write(options[:count])      # single access
+      reg(:rwcs).bits(:err).write(0)                    # read/write access error
+      reg(:rwcs).bits(:dv).write(0)                     # read/write access data valid
       write_nexus_register(reg(:rwcs))
 
       if options[:write]
@@ -204,10 +205,42 @@ module Nexus
 
     end
 
-    # Read a memory-mapped resource
+    # Single Read from memory-mapped resource
     # for now only supports 32-bit data
     def single_read_access(address, data, options={})
       single_write_access(address, data, options.merge(:write => false))
+    end
+
+    # Block Write to memory-mapped resources
+    # for now only supports 32-bit data
+    #
+    # address = address at start of block
+    # block_data = array of 32-bit values of block data to write
+    def block_write_access(address, block_data=[], options={})
+      options={:write => true,          # whether to write or read the block
+              }.merge(options)
+
+      block_data.each_index do |i|
+        if i == 0                                  # first do single write access with count > 1
+          single_write_access(address, block_data[0], options.merge(:count => block_data.count))
+        else
+          reg(:rwd).write(block_data[i])
+          if options[:write]
+            write_nexus_register(reg(:rwd))
+          else
+            read_nexus_register(reg(:rwd))
+          end
+        end
+      end
+    end
+
+    # Block Read of memory-mapped resources
+    # for now only supports 32-bit data
+    #
+    # address = address at start of block
+    # block_data = array of 32-bit values of block data to read
+    def block_read_access(address, block_data=[], options={})
+      block_write_access(address, block_data, options.merge(:write => false))
     end
 
 #    def test_read_flag(reg_to_check)

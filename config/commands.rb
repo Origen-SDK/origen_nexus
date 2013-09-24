@@ -75,6 +75,8 @@ when "examples"
     # (btw, %w() is ruby shorthand for making an array of strings)
      ARGV = %w(read_write_reg -t debug -r approved)
      load "#{RGen.top}/lib/rgen/commands/generate.rb"
+     ARGV = %w(read_write_block -t debug -r approved)
+     load "#{RGen.top}/lib/rgen/commands/generate.rb"
   
     # check if nothing changed or nothing added
     if RGen.app.stats.changed_files == 0 && 

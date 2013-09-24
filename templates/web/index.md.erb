@@ -74,6 +74,16 @@ class Panther2
     nexus.write_register(reg, options)
   end
 
+  # To write a block of memory
+  def write_ram(address, data, options={})
+    nexus.block_write_access(address, data, options)
+  end
+
+  # To read a block of memory
+  def read_ram(address, data, options={})
+    nexus.block_read_access(address, data, options)
+  end
+
 
 end
 
