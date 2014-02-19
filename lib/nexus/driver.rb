@@ -4,6 +4,10 @@ module Nexus
     # Include JTAG driver instance to fall back on (if owner doesn't have)
     include JTAG
 
+    # Allow for JTAG optionality
+    # blank for now
+    JTAG_CONFIG = {}
+
     # Include registers as Nexus has its own registers
     include RGen::Registers
 
@@ -40,19 +44,40 @@ module Nexus
 
     def initialize(owner, options={})
 
-      # Doesn't seem to be the need to vary this on a per SoC basis
-      # this may change down the road
+      if defined?(owner.class::NEXUS_CONFIG)
+        options = owner.class::NEXUS_CONFIG.merge(options)
+      end
 
-      @once_ocmd_width = 10
-      @once_nexus_access_instr = 0b0001111100
-      @once_bypass_instr = 0b0001111111
-      @nexus_command_width = 8
+      # Fallback defaults
+      options = {
+        :tclk_format => :rh,                      # format of JTAG clock used:  ReturnHigh (:rh), ReturnLo (:rl)
+        :tclk_multiple => 1,                      # number of cycles for one clock pulse, assumes 50% duty cycle. Uses tester non-return format to spread TCK across multiple cycles.
+                                                  #    e.g. @tclk_multiple = 2, @tclk_format = :rh, means one cycle with Tck low (non-return), one with Tck high (NR)
+                                                  #         @tclk_multiple = 4, @tclk_format = :rl, means 2 cycles with Tck high (NR), 2 with Tck low (NR)
+                                                  #
+        :once_ocmd_width => 10,                   # Width of OnCE OCMD instruction reg in bits
+        :once_nexus_access_instr => 0b0001111100, # Instruction used to access nexus via OnCE, default: 0x07C.
+        :once_bypass_instr => 0b0001111111,       # Instruction used to bypass OnCE, default: 0x07F.
+        :nexus_command_width => 8,                # Width of Nexus command data regs, default: 8.
+      }.merge(options)
+
+      # Define JTAG configs based on Nexus config
+      JTAG_CONFIG[:tclk_format] = options[:tclk_format]
+      JTAG_CONFIG[:tclk_multiple] = options[:tclk_multiple]
+
+      @once_ocmd_width = options[:once_ocmd_width]
+      @once_nexus_access_instr = options[:once_nexus_access_instr]
+      @once_bypass_instr = options[:once_bypass_instr]
+      @nexus_command_width = options[:nexus_command_width]
 
       # Define nexus registers
       define_nexus_registers
 
       @owner = owner
 
+    end
+
+    def on_created
     end
 
     # This proxies all pin requests from our local JTAG driver to
@@ -72,22 +97,29 @@ module Nexus
 
       # RWCS - Read/Write Access Control Register
       #        read addr = 0x0E, write addr = 0x0F
-      add_reg32 :rwcs, 0x0E,  :ac => {pos: 31},
-                              :rw => {pos: 30},
-                              :sz => {pos: 27, bits: 3},
-                              :map => {pos: 24, bits: 3},
-                              :pr => {pos: 22, bits: 2},
-                              :cnt => {pos: 2, bits: 14},
-                              :err => {pos: 1, :writable =>  false},
-                              :dv => {pos: 0, :writable =>  false}
+      reg :rwcs, 0x0E, :size => 32 do
+        bit 31,     :ac
+        bit 30,     :rw
+        bit 29..27, :sz
+        bit 26..24, :map
+        bit 23..22, :pr
+        bit 15..2,  :cnt
+        bit 1,      :err, :writable => false
+        bit 0,      :dv, :writable => false
+
+      end
 
       # RWD - Read/Write Access Data
       #       read addr = 0x12, write addr = 0x13
-      add_reg32 :rwa,  0x12, :addr => {pos: 0, bits: 32}
+      reg :rwa, 0x12, :size => 32 do
+        bit 31..0, :addr
+      end
 
       # RWD - Read/Write Access Data
       #       read addr = 0x14, write addr = 0x15
-      add_reg32 :rwd,  0x14, :data => {pos: 0, bits: 32}
+      reg :rwd, 0x14, :size => 32 do
+        bit 31..0, :data
+      end
 
     end
 

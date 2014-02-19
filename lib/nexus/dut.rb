@@ -10,7 +10,15 @@ module Nexus
     include RGen::Pins
     include RGen::Registers
 
-    def initialize
+    NEXUS_CONFIG = {
+      :tclk_format => :rh,
+      :tclk_multiple => 1
+    }
+
+    def initialize(options={})
+      NEXUS_CONFIG[:tclk_format] = options[:tclk_format] if options[:tclk_format]
+      NEXUS_CONFIG[:tclk_multiple] = options[:tclk_multiple] if options[:tclk_multiple]
+
       # Any DUT that uses Nexus must declare these pins
       # (or an alias)
 
@@ -22,15 +30,22 @@ module Nexus
 
       # Define dummy register to use to test Nexus
       # driver for test purposes
-      add_reg32 :testme32, 0x007a,   :enable => {pos: 0},
-                                     :portA =>  {pos: 8, bits: 8},
-                                     :portB =>  {pos: 16, bits: 16}
+      reg :testme32, 0x007a, :size => 32 do
+        bit 31..16, :portB
+        bit 15..8,  :portA
+        bit 0,      :enable
+      end
 
-      add_reg32 :status32, 0x007b,   :error_bit => {pos: 0, bits: 1, writable: false},
-                                     :fail_vals => {pos: 16, bits: 16, writable: false}
+      reg :status32, 0x007b, :size => 32 do
+        bit 31..16,  :fail_vals, :writable => false
+        bit 0,       :error_bit, :writable => false
+      end
 
-      add_reg :testme16, 0x007c, 16, :portC => {pos: 0, bits: 8},
-                                     :portD => {pos: 8, bits: 8}
+      reg :testme16, 0x007c, :size => 16 do
+        bit 15..8, :portD
+        bit 7..0,  :portC
+      end
+
     end
 
 
@@ -48,6 +63,14 @@ module Nexus
      # $tester.dont_compress = true
       nexus.write_register(reg, options)
      # $tester.dont_compress = false
+    end
+
+    def tclk_format
+      NEXUS_CONFIG[:tclk_format]
+    end
+
+    def tclk_multiple
+      NEXUS_CONFIG[:tclk_multiple]
     end
 
   end

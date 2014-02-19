@@ -1,5 +1,6 @@
 # Pattern to exercise the reading and writing of a register using Nexus
-Pattern.create do
+Pattern.create(options={:name => "read_write_reg_#{$dut.tclk_format.upcase}#{$dut.tclk_multiple}"}) do
+
   ss "Test write register with all 1s"
   $dut.reg(:testme32).write!(0xFFFFFFFF)
   ss "Test read register after all 1s write"

@@ -1,3 +1,32 @@
+<a class="anchor release_tag" name="v0_1_0"></a>
+<h1><a href="#v0_1_0">Tag: v0.1.0</a></h1>
+
+##### Branch: 'Trunk'
+
+##### by Daniel Hadad on 19-Feb-2014 16:15PM
+
+
+Added ability to modify how Nexus plugin works via <code>NEXUS\_CONFIG</code>
+hash defined in DUT model.
+
+Added ability to modify TCLK timing format and the # of cycles TCLK spans for
+cases where TCLK needs to run at a fraction of another clock pin. Assumes 50% duty cycle.
+
+To use update NEXUS\_CONFIG in DUT model, e.g.
+
+~~~ruby
+  NEXUS\_CONFIG = {
+    :tclk\_format => :rl,
+    :tclk\_multiple => 4,
+    :once\_ocmd\_width => 10,
+    :once\_nexus\_access\_instr => 0b0001111100,
+    :once\_bypass\_instr => 0b0001111111,
+    :nexus\_command\_width => 8
+  }
+~~~
+
+Added links to the API docs on the website.
+
 ## Tag: v0.0.0.dev3
 
 ##### Branch: 'Trunk'

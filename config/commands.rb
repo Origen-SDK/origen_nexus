@@ -73,9 +73,13 @@ when "examples"
 
     # Pattern generator tests
     # (btw, %w() is ruby shorthand for making an array of strings)
-     ARGV = %w(read_write_reg -t debug -r approved)
+     ARGV = %w(regression.list -t debug_RH1 -r approved)
      load "#{RGen.top}/lib/rgen/commands/generate.rb"
-     ARGV = %w(read_write_block -t debug -r approved)
+     ARGV = %w(regression.list -t debug_RL1 -r approved)
+     load "#{RGen.top}/lib/rgen/commands/generate.rb"
+     ARGV = %w(regression.list -t debug_RH4 -r approved)
+     load "#{RGen.top}/lib/rgen/commands/generate.rb"
+     ARGV = %w(regression.list -t debug_RL4 -r approved)
      load "#{RGen.top}/lib/rgen/commands/generate.rb"
   
     # check if nothing changed or nothing added

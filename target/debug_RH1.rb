@@ -3,6 +3,6 @@
 # Normally production targets define the target and then debug targets
 # are setup to load the production target before switching RGen to debug
 # mode as shown below.
-load "#{RGen.root}/target/production.rb"
+load "#{RGen.root}/target/production_RH1.rb"
 
 RGen.config.mode = :debug

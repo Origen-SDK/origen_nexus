@@ -1,5 +1,5 @@
 # Pattern to exercise the reading and writing of a register using Nexus
-Pattern.create do
+Pattern.create(options={:name => "read_write_block_#{$dut.tclk_format.upcase}#{$dut.tclk_multiple}"}) do
 
   block_address = 0x5A
 

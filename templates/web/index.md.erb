@@ -6,16 +6,16 @@
 
 ### Purpose
 
-This library provides an RGen API to use the Nexus protocol.
+This plugin provides an RGen API to use the Nexus protocol.
 
-This library supports Read/Write Access of system memory mapped resources,
+This plugin supports Read/Write Access of system memory mapped resources,
 including IPS mapped registers via the conventional RGen Register API.
 
 
 ### How To Import
 
 Add the following to your <code>config/application.rb</code> file to import
-this library:
+this plugin:
 
 ~~~ruby
 config.imports = [
@@ -33,13 +33,22 @@ define the required pins,
 normally the pins would be an alias to existing DUT pins and therefore the
 driver cannot assume them.
 
-%#Including the module adds a <code>nexus</code> method which will return an instance of
-%#[<code>Nexus::Driver</code>](<%= path "api/Nexus/Driver.html" %>).
 Including the module adds a <code>nexus</code> method which will return an instance of
-<code>Nexus::Driver</code>.
+[<code>Nexus::Driver</code>](<%= path "api/Nexus/Driver.html" %>).
 
 The driver provides <code>read_register</code> and <code>write_register</code>
 methods that allow the driver to be easily hooked into the RGen register API.
+
+The following attributes can be customized by defining a <code>NEXUS_CONFIG</code>
+hash:
+
+* **tclk_format** - TCLK timing format,  Return High (:rh) or Return Low (:rl). Default :rh
+* **tclk_multiple** - Number of cycles for a single TCLK pulse to cover, to support cases where TCLK needs to be a fraction of another clock period. Assumes 50% duty cycle, specify only even numbers if > 1. Default :r1
+* **once_ocmd_width** - Width of OnCE OCMD instruction reg in bits. Default: 10
+* **once_nexus_access_instr** - Instruction used to access nexus via OnCE. Default: 0x07C 
+* **once_bypass_instr** - Instruction used to bypass OnCE. Default: 0x07F
+* **nexus_command_width** - Width of Nexus command data regs. Default: 8
+
 Here is an example integration:
 
 ~~~ruby
@@ -49,6 +58,12 @@ class Panther2
 
   include RGen::Pins
   include RGen::Registers
+
+  # TCK covers 4 tester cycles, 2 high then 2 low for each effective TCK pulse
+  NEXUS_CONFIG = {
+    :tclk_format => :rl,
+    :tclk_multiple => 4
+  }
 
   def initialize
     # Add these required pins (or an alias is fine)
@@ -131,10 +146,10 @@ dssc pop -rec -get .
 Some patterns can be found in the pattern directory to exercise the protocol.
 
 Follow the instructions here if you want to make a 3rd party app
-workspace use your development copy of the Nexus library:
+workspace use your development copy of the Nexus plugin:
 [Setting up a Library Development Environment](http://rgen.freescale.net/rgen/latest/guides/libraries/environment)
 
-This library also contains a test suite, makes sure this passes before committing
+This plugin also contains a test suite, makes sure this passes before committing
 any changes!
 
 ~~~

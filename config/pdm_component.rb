@@ -1,4 +1,4 @@
-class Application
+class Nexus_Application
   # An instance of this class is pre-instantiated at: RGen.app.pdm_component
   class PDMComponent
 
