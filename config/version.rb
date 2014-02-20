@@ -11,7 +11,7 @@ class Nexus_Application < RGen::Application
   # WITHIN config/application.rb
   MAJOR = 0
   MINOR = 1
-  BUGFIX = 0
+  BUGFIX = 1
   DEV = nil
 
   VERSION = "v" + [MAJOR, MINOR, BUGFIX].join(".") + (DEV ? ".dev#{DEV}" : '')

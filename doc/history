@@ -1,3 +1,14 @@
+<a class="anchor release_tag" name="v0_1_1"></a>
+<h1><a href="#v0_1_1">Tag: v0.1.1</a></h1>
+
+##### Branch: 'Trunk'
+
+##### by Daniel Hadad on 20-Feb-2014 15:52PM
+
+
+Updated to use v0.7.1 which corrects properly handling of TCK formatting for jtag.shift
+method.
+
 <a class="anchor release_tag" name="v0_1_0"></a>
 <h1><a href="#v0_1_0">Tag: v0.1.0</a></h1>
 
