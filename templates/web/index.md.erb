@@ -44,6 +44,7 @@ hash:
 
 * **tclk_format** - TCLK timing format,  Return High (:rh) or Return Low (:rl). Default :rh
 * **tclk_multiple** - Number of cycles for a single TCLK pulse to cover, to support cases where TCLK needs to be a fraction of another clock period. Assumes 50% duty cycle, specify only even numbers if > 1. Default :r1
+* **tdo_strobe** - When using multiple cycles for TCK, which state of TCK to strobe for TDO, :tclk_high or :tclk_low or :tclk_all. Default :tclk_high.
 * **once_ocmd_width** - Width of OnCE OCMD instruction reg in bits. Default: 10
 * **once_nexus_access_instr** - Instruction used to access nexus via OnCE. Default: 0x07C 
 * **once_bypass_instr** - Instruction used to bypass OnCE. Default: 0x07F

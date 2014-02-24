@@ -54,6 +54,7 @@ module Nexus
         :tclk_multiple => 1,                      # number of cycles for one clock pulse, assumes 50% duty cycle. Uses tester non-return format to spread TCK across multiple cycles.
                                                   #    e.g. @tclk_multiple = 2, @tclk_format = :rh, means one cycle with Tck low (non-return), one with Tck high (NR)
                                                   #         @tclk_multiple = 4, @tclk_format = :rl, means 2 cycles with Tck high (NR), 2 with Tck low (NR)
+        :tdo_strobe => :tclk_high,                # when using multiple cycles for TCK, which state of TCK to strobe for TDO, :tclk_high or :tclk_low or :tclk_all
                                                   #
         :once_ocmd_width => 10,                   # Width of OnCE OCMD instruction reg in bits
         :once_nexus_access_instr => 0b0001111100, # Instruction used to access nexus via OnCE, default: 0x07C.
@@ -64,6 +65,7 @@ module Nexus
       # Define JTAG configs based on Nexus config
       JTAG_CONFIG[:tclk_format] = options[:tclk_format]
       JTAG_CONFIG[:tclk_multiple] = options[:tclk_multiple]
+      JTAG_CONFIG[:tdo_strobe] = options[:tdo_strobe]
 
       @once_ocmd_width = options[:once_ocmd_width]
       @once_nexus_access_instr = options[:once_nexus_access_instr]

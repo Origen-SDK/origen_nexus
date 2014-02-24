@@ -6,7 +6,7 @@ class Nexus_Application < RGen::Application
 
   # This information is used in headers and email templates, set it specific
   # to your application
-  config.name     = "Nexus library"
+  config.name     = "Nexus"
   config.initials = "Nexus"
   config.vault    = "sync://sync-15088:15088/Projects/common_tester_blocks/rgen_blocks/protocol/Nexus/tool_data/rgen" 
 
@@ -21,7 +21,7 @@ class Nexus_Application < RGen::Application
   config.imports = [
     {
       :vault => "sync://sync-15088:15088/Projects/common_tester_blocks/rgen_blocks/physical/JTAG/tool_data/rgen",
-      :version => "v0.7.1",
+      :version => "v0.8.0",
     }
   ]
 

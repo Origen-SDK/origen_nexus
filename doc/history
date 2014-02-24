@@ -1,3 +1,15 @@
+<a class="anchor release_tag" name="v0_2_0"></a>
+<h1><a href="#v0_2_0">Tag: v0.2.0</a></h1>
+
+##### Branch: 'Trunk'
+
+##### by Daniel Hadad on 24-Feb-2014 17:22PM
+
+
+Added NEXUS\_CONFIG option tdo\_strobe to support only strobing TDO when TCK is in a certain
+state, for when tck\_multiple > 1 (TCK spans multiple tester cycles).
+Default is to strobe TDO when TCK is high.
+
 <a class="anchor release_tag" name="v0_1_1"></a>
 <h1><a href="#v0_1_1">Tag: v0.1.1</a></h1>
 
