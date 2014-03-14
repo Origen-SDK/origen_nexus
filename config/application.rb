@@ -21,7 +21,7 @@ class Nexus_Application < RGen::Application
   config.imports = [
     {
       :vault => "sync://sync-15088:15088/Projects/common_tester_blocks/rgen_blocks/physical/JTAG/tool_data/rgen",
-      :version => "v0.8.0",
+      :version => "v0.9.0",
     }
   ]
 

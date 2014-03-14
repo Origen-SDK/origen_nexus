@@ -1,3 +1,15 @@
+<a class="anchor release_tag" name="v0_3_0"></a>
+<h1><a href="#v0_3_0">Tag: v0.3.0</a></h1>
+
+##### Branch: 'Trunk'
+
+##### by Daniel Hadad on 14-Mar-2014 17:25PM
+
+
+
+Added tdo\_store\_cycle NEXUS\_CONFIG option to permit specifying which vector to
+store in multi-cycle TCK format.
+
 <a class="anchor release_tag" name="v0_2_0"></a>
 <h1><a href="#v0_2_0">Tag: v0.2.0</a></h1>
 
