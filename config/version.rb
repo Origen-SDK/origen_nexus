@@ -10,7 +10,7 @@ class Nexus_Application < RGen::Application
   # IF ENABLING THIS MAKE SURE YOU ALSO SET config.semantically_version = true
   # WITHIN config/application.rb
   MAJOR = 0
-  MINOR = 3
+  MINOR = 4
   BUGFIX = 0
   DEV = nil
 

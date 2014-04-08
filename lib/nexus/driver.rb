@@ -194,6 +194,50 @@ module Nexus
       write_nexus_register(reg_or_val, options.merge(:write => false))
     end
 
+    # Write data cycles only for a Register
+    # Used if only want data cycles for overlay subroutines
+    def write_data_only(reg_or_val, options={})
+      options = { :write => true,        # whether to write or read
+                }.merge(options)
+
+      data = exact_data(reg_or_val, options)
+
+      # Size of RWD register being used for output
+      size = reg(:rwd).size
+
+      # if reading a real register then need to handle copying over all data and flags
+      # undefined regs will be handled in lower function so that default is to treat
+      # as undefined reg (just simple accesses)
+      reg(:rwd).overlay(nil)  # clear overlay flags if there, as sticky
+      if real_reg?(reg_or_val)
+        reg(:rwd).copy_all(reg_or_val)
+      end
+
+      if options[:write]
+        # Send command to write RWD reg
+        # Send data value to be written to RWD reg
+        reg(:rwd).write(data)
+
+        jtag.shift(reg(:rwd), options.merge(size: size, cycle_last: true, includes_last_bit: true))
+
+      else 
+        # Mark all bits for read
+        reg(:rwd).read
+
+        jtag.shift(reg(:rwd), options.merge(size: size, read: true, cycle_last: true, includes_last_bit: true))
+
+      end
+
+      # Clear flags so as to not affect subsequent reg reads/writes
+      reg(:rwd).clear_flags
+      reg_or_val.clear_flags if reg_or_val.respond_to?(:clear_flags)
+
+    end
+
+    # Read data cycles only for RWD Register
+    def read_data_only(reg_or_val, options={})
+      write_data_only(reg_or_val, options.merge(:write => false))
+    end
 
     # Single Write to memory-mapped resource
     # for now only supports 32-bit data

@@ -104,6 +104,19 @@ class Panther2
     nexus.block_read_access(address, data, options)
   end
 
+  # Generate an overlay subroutine for a register
+  def overlay_register(reg, options={})
+    if $tester.respond_to?('start_subroutine')
+      $tester.start_subroutine(options[:label])
+    end
+
+    nexus.write_data_only(reg, options)
+
+    if $tester.respond_to?('end_subroutine')
+      $tester.end_subroutine
+    end
+  end
+
 
 end
 

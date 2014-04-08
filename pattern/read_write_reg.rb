@@ -52,12 +52,12 @@ Pattern.create(options={:name => "read_write_reg_#{$dut.tclk_format.upcase}#{$du
 
   ss "Test bit level write overlay, only portA should be from subroutine"
   $dut.reg(:testme32).overlay(nil)  # have to reset overlay bits as they are sticky from last overlay set
-  $dut.reg(:testme32).bits(:portA).overlay("write_overlay")
+  $dut.reg(:testme32).bits(:portA).overlay("write_overlay_portA")
   $dut.reg(:testme32).bits(:portA).write!
 
   ss "Test bit level read overlay, only portA should be from subroutine"
   $dut.reg(:testme32).overlay(nil)
-  $dut.reg(:testme32).bits(:portA).overlay("read_overlay")
+  $dut.reg(:testme32).bits(:portA).overlay("read_overlay_portA")
   $dut.reg(:testme32).bits(:portA).read!
 
 end

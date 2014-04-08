@@ -1,0 +1,104 @@
+// ***************************************************************************
+// GENERATED:
+//   Time:    08-Apr-2014 15:20PM
+//   By:      Daniel Hadad
+//   Command: rgen g subroutines -t debug_RL1.rb
+// ***************************************************************************
+// ENVIRONMENT:
+//   Application
+//     Vault:     sync://sync-15088:15088/Projects/common_tester_blocks/rgen_blocks/protocol/Nexus/tool_data/rgen
+//     Version:   v0.3.0
+//     Workspace: /proj/pet3/C55FMC/nexus_v0.3.0
+//   RGen
+//     Vault:     sync://sync-15088:15088/Projects/common_tester_blocks/rgen
+//     Version:   v2.3.0.dev37
+//     Workspace: /proj/pet3/C55FMC/rgen_top_v2.3.0.dev37
+// ***************************************************************************
+import tset tp0;                                                                                
+svm_only_file = no;                                                                             
+opcode_mode = extended;                                                                         
+compressed = yes;                                                                               
+                                                                                                
+vector ($tset, tclk, tms, tdi, tdo)                                                             
+{                                                                                               
+start_label pattern_st:                                                                         
+// Write Overlay TESTME32 with 0xFFFF0000
+global subr write_overlay:                                                                      
+repeat 16                                                        > tp0                          1 0 0 X ;
+repeat 15                                                        > tp0                          1 0 1 X ;
+return                                                           > tp0                          1 1 1 X ;
+// Read Overlay TESTME32 with 0xFFFF0000
+global subr read_overlay:                                                                       
+repeat 16                                                        > tp0                          1 0 0 L ;
+repeat 15                                                        > tp0                          1 0 0 H ;
+return                                                           > tp0                          1 1 0 H ;
+// Write Overlay 0x55555555
+global subr write_overlay2:                                                                     
+                                                                 > tp0                          1 0 1 X ;
+                                                                 > tp0                          1 0 0 X ;
+                                                                 > tp0                          1 0 1 X ;
+                                                                 > tp0                          1 0 0 X ;
+                                                                 > tp0                          1 0 1 X ;
+                                                                 > tp0                          1 0 0 X ;
+                                                                 > tp0                          1 0 1 X ;
+                                                                 > tp0                          1 0 0 X ;
+                                                                 > tp0                          1 0 1 X ;
+                                                                 > tp0                          1 0 0 X ;
+                                                                 > tp0                          1 0 1 X ;
+                                                                 > tp0                          1 0 0 X ;
+                                                                 > tp0                          1 0 1 X ;
+                                                                 > tp0                          1 0 0 X ;
+                                                                 > tp0                          1 0 1 X ;
+                                                                 > tp0                          1 0 0 X ;
+                                                                 > tp0                          1 0 1 X ;
+                                                                 > tp0                          1 0 0 X ;
+                                                                 > tp0                          1 0 1 X ;
+                                                                 > tp0                          1 0 0 X ;
+                                                                 > tp0                          1 0 1 X ;
+                                                                 > tp0                          1 0 0 X ;
+                                                                 > tp0                          1 0 1 X ;
+                                                                 > tp0                          1 0 0 X ;
+                                                                 > tp0                          1 0 1 X ;
+                                                                 > tp0                          1 0 0 X ;
+                                                                 > tp0                          1 0 1 X ;
+                                                                 > tp0                          1 0 0 X ;
+                                                                 > tp0                          1 0 1 X ;
+                                                                 > tp0                          1 0 0 X ;
+                                                                 > tp0                          1 0 1 X ;
+return                                                           > tp0                          1 1 0 X ;
+// Write Overlay 0xAAAAAAAA
+global subr read_overlay2:                                                                      
+                                                                 > tp0                          1 0 0 H ;
+                                                                 > tp0                          1 0 0 L ;
+                                                                 > tp0                          1 0 0 H ;
+                                                                 > tp0                          1 0 0 L ;
+                                                                 > tp0                          1 0 0 H ;
+                                                                 > tp0                          1 0 0 L ;
+                                                                 > tp0                          1 0 0 H ;
+                                                                 > tp0                          1 0 0 L ;
+                                                                 > tp0                          1 0 0 H ;
+                                                                 > tp0                          1 0 0 L ;
+                                                                 > tp0                          1 0 0 H ;
+                                                                 > tp0                          1 0 0 L ;
+                                                                 > tp0                          1 0 0 H ;
+                                                                 > tp0                          1 0 0 L ;
+                                                                 > tp0                          1 0 0 H ;
+                                                                 > tp0                          1 0 0 L ;
+                                                                 > tp0                          1 0 0 H ;
+                                                                 > tp0                          1 0 0 L ;
+                                                                 > tp0                          1 0 0 H ;
+                                                                 > tp0                          1 0 0 L ;
+                                                                 > tp0                          1 0 0 H ;
+                                                                 > tp0                          1 0 0 L ;
+                                                                 > tp0                          1 0 0 H ;
+                                                                 > tp0                          1 0 0 L ;
+                                                                 > tp0                          1 0 0 H ;
+                                                                 > tp0                          1 0 0 L ;
+                                                                 > tp0                          1 0 0 H ;
+                                                                 > tp0                          1 0 0 L ;
+                                                                 > tp0                          1 0 0 H ;
+                                                                 > tp0                          1 0 0 L ;
+                                                                 > tp0                          1 0 0 H ;
+return                                                           > tp0                          1 1 0 L ;
+end_module                                                       > tp0                          1 1 0 X ;
+}                                                                                               
