@@ -13,18 +13,18 @@ including IPS mapped registers via the conventional RGen Register API.
 
 
 ### How To Import
-
-Add the following to your <code>config/application.rb</code> file to import
-this plugin:
+In your Gemfile add:
 
 ~~~ruby
-config.imports = [
-  {
-    :vault => "<%= RGen.config.vault %>",
-    :version => "<%= RGen.app.version %>",
-  }
-]
+gem "nexus", ">= <%= RGen.app.version %>"
 ~~~
+
+or if your application is a plugin add this to your <code>.gemspec</code>
+
+~~~ruby
+spec.add_development_dependency "nexus", ">= <%= RGen.app.version %>"
+~~~
+
 
 ### How To Use
 
