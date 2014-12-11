@@ -16,14 +16,16 @@ including IPS mapped registers via the conventional RGen Register API.
 In your Gemfile add:
 
 ~~~ruby
-gem "nexus", ">= <%= RGen.app.version %>"
+gem "rgen_nexus", ">= <%= RGen.app.version %>"
 ~~~
 
 or if your application is a plugin add this to your <code>.gemspec</code>
 
 ~~~ruby
-spec.add_development_dependency "nexus", ">= <%= RGen.app.version %>"
+spec.add_development_dependency "rgen_nexus", ">= <%= RGen.app.version %>"
 ~~~
+
+__NOTE:__  You will also need to <code>require 'rgen_nexus'</code> somewhere in your environment.  This can be done in <code>config/environment.rb</code> for example.
 
 
 ### How To Use

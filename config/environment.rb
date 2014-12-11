@@ -25,8 +25,9 @@
 #      it from the one in the parent application):
 #require "#{RGen.root}/c90_top_level/p2"
 
-require "nexus"
+require 'nexus'
+require 'rgen_nexus'
 module Nexus
-  autoload :Driver, "nexus/driver"
+  autoload :Driver, 'nexus/driver'
 end
 

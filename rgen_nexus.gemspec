@@ -3,7 +3,7 @@ config = File.expand_path('../config', __FILE__)
 require "#{config}/version"
 
 Gem::Specification.new do |spec|
-  spec.name          = "nexus"
+  spec.name          = "rgen_nexus"
   spec.version       = Nexus::VERSION
   spec.authors       = ["Daniel Hadad"]
   spec.email         = ["ra6854@freescale.com"]
@@ -25,6 +25,7 @@ Gem::Specification.new do |spec|
 
   # Add any gems that your plugin needs to run within a host application
   spec.add_runtime_dependency "rgen_core", ">= 2.5.0.pre14"
-  spec.add_runtime_dependency "jtag", ">= 0.10.0"
+
+  spec.add_runtime_dependency "rgen_jtag", ">= 0.10.1"
 
 end

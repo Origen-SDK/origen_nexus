@@ -1,3 +1,15 @@
+<a class="anchor release_tag" name="v0_5_1"></a>
+<h1><a href="#v0_5_1">Tag: v0.5.1</a></h1>
+
+##### Branch: 'Trunk'
+
+##### by Daniel Hadad on 11-Dec-2014 13:41PM
+
+
+Rename gem to 'rgen\_nexus' as there were conflicts with public gem named
+'nexus'.
+Added code (commented out) to permit using local/unreleased gem.
+
 <a class="anchor release_tag" name="v0_5_0"></a>
 <h1><a href="#v0_5_0">Tag: v0.5.0</a></h1>
 

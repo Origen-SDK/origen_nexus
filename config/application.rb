@@ -10,6 +10,9 @@ class Nexus_Application < RGen::Application
   config.initials = "Nexus"
   config.vault    = "sync://sync-15088:15088/Projects/common_tester_blocks/rgen_blocks/protocol/Nexus/tool_data/rgen" 
 
+  # Force naming of gem
+  self.name = "rgen_nexus"
+
   # To enable deployment of your documentation to a web server (via the 'rgen web'
   # command) fill in these attributes. The example here is configured to deploy to
   # the rgen.freescale.net domain, which is an easy option if you don't have another
