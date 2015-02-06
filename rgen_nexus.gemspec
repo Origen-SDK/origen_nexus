@@ -24,7 +24,7 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   # Add any gems that your plugin needs to run within a host application
-  spec.add_runtime_dependency "rgen_core", ">= 2.5.0.pre14"
+  spec.add_runtime_dependency "rgen_core", ">= 2.5.0.pre18"
 
   spec.add_runtime_dependency "rgen_jtag", ">= 0.10.1"
 

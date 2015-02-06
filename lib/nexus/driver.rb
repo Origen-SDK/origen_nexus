@@ -157,6 +157,7 @@ module Nexus
     # Write a given Nexus register
     def write_nexus_register(reg_or_val, options = {})
       options = { write: true,        # whether to write or read
+                  overlay: false,
                 }.merge(options)
 
       addr = exact_address(reg_or_val, options)
@@ -173,13 +174,19 @@ module Nexus
 
       # first pass : select register via nexus command
       jtag.write_dr addr, size: nexus_command_width, msg: log2("OnCE_Send(#{nexus_command_width}, 0x%02X)" % [addr])
+      if options[:overlay] == true
+        # if we want to overlay expect values, then
+        #   put dummy data in vectors to force them to be uncompressable by pattern generator.
+        reg_or_val.data = 0x55555555
+        data = exact_data(reg_or_val, options)
+      end
 
       if options[:write]
         # second pass : pass data to register
-        jtag.write_dr reg_or_val, size: size, msg: log2("OnCE_Send(#{size}, 0x%08X)" % [data])
+        jtag.write_dr reg_or_val, overlay: options[:overlay], overlay_label: options[:overlay_label], size: size, msg: log2("OnCE_Send(#{size}, 0x%08X)" % [ data ])
       else
         # second pass : read data from register
-        jtag.read_dr(reg_or_val, size: size, msg: log2("OnCE_Read(#{size}, 0x%08X)" % [data]))
+        jtag.read_dr(reg_or_val, overlay: options[:overlay], overlay_label: options[:overlay_label], size: size, msg: log2("OnCE_Read(#{size}, 0x%08X)" % [ data ]))
       end
     end
 
@@ -235,10 +242,10 @@ module Nexus
     # Single Write to memory-mapped resource
     # for now only supports 32-bit data
     def single_write_access(address, data, options = {})
-      options = { write: true,          # whether to write or read the register
-                  undef: true,          # whether IPS being accessed is a register or undefined
-                  count: 1,             # by default use single address access mode
-                # default: assume not a real register
+      options={write: true,          # whether to write or read the register
+               undef: true,          # whether IPS being accessed is a register or undefined
+               count: 1,             # by default use single address access mode
+               overlay: false,                         # default: assume not a real register
               }.merge(options)
 
       enable_nexus_access
@@ -264,7 +271,7 @@ module Nexus
         # Send command to write RWD reg
         # Send data value to be written to RWD reg
         reg(:rwd).write(data)
-        write_nexus_register(reg(:rwd))
+        write_nexus_register(reg(:rwd), options.reject{|x| x == :address})
       else
         # If undefined reg, then mark all bits for read
         if options[:undef]
@@ -362,6 +369,7 @@ module Nexus
     #
     def write_register(reg_or_val, options = {})
       options = { write: true,    # whether to write or read the register
+                  overlay: false,
               }.merge(options)
       address = exact_address(reg_or_val, options)
       data = exact_data(reg_or_val, options)

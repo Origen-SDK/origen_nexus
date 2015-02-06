@@ -19,7 +19,7 @@ module RGen
 
         # Users
         User.new("Priyavadan Kumar", "b21094"),
-        User.new("Jiang Liu", "b20251"),
+        User.new("Jiang Liu", "b20251",:admin),
         # The r-number attribute can be anything that can be prefixed to an 
         # @freescale.com email address, so you can add mailing list references
         # as well like this:
