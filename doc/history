@@ -1,3 +1,14 @@
+<a class="anchor release_tag" name="v0_6_0_pre1"></a>
+<h2><a href="#v0_6_0_pre1">Tag: v0.6.0.pre1</a></h2>
+
+##### Branch: 'Trunk'
+
+##### by Jiang Liu on 12-Feb-2015 18:32PM
+
+
+fixed nexus read bug where the address passed in would be confused with the address of
+:rwd
+
 <a class="anchor release_tag" name="v0_6_0_pre0"></a>
 <h2><a href="#v0_6_0_pre0">Tag: v0.6.0.pre0</a></h2>
 

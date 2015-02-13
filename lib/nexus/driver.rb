@@ -158,9 +158,8 @@ module Nexus
     def write_nexus_register(reg_or_val, options = {})
       options = { write: true,        # whether to write or read
                   overlay: false,
-                }.merge(options)
-
-      addr = exact_address(reg_or_val, options)
+                }.merge(options)     
+      addr = exact_address(reg_or_val, options)     
       if options[:write] then addr = addr + 1 end # offset address by 1 since writing
       data = exact_data(reg_or_val, options)
       size = exact_size(reg_or_val, options)
@@ -280,7 +279,7 @@ module Nexus
         # Send command to read RWD reg
         # Read RWD reg value
         reg(:rwd).write(data)
-        read_nexus_register(reg(:rwd))
+        read_nexus_register(reg(:rwd), options.reject{|x| x == :address})
       end
     end
 
@@ -418,7 +417,7 @@ module Nexus
     # Provides exact address value either if a defined register is
     # provided or if an address is provided
     def exact_address(reg_or_val, options = {})
-      address = options[:addr] || options[:address]
+      address = options[:addr] || options[:address] 
       unless address
         # if no address provided as option then use register address
         if real_reg?(reg_or_val)             # if real register
