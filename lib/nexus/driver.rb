@@ -245,10 +245,11 @@ module Nexus
                undef: true,          # whether IPS being accessed is a register or undefined
                count: 1,             # by default use single address access mode
                overlay: false,                         # default: assume not a real register
+               nexus_init: true
               }.merge(options)
-
-      enable_nexus_access
-
+      if options[:nexus_init]
+        enable_nexus_access
+      end
       # Send command to write RWA reg
       # Send address value to RWA reg
       reg(:rwa).write(address)
