@@ -1,3 +1,14 @@
+<a class="anchor release_tag" name="v0_6_0_pre3"></a>
+<h2><a href="#v0_6_0_pre3">Tag: v0.6.0.pre3</a></h2>
+
+##### Branch: 'Trunk'
+
+##### by Jiang Liu on 01-Apr-2015 10:36AM
+
+
+Added cpuscr register definition as well as go+exit instruction for allowing exit of cpu
+debug mode and kick off code execution from a user specified address location.
+
 <a class="anchor release_tag" name="v0_6_0_pre2"></a>
 <h2><a href="#v0_6_0_pre2">Tag: v0.6.0.pre2</a></h2>
 

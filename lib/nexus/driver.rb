@@ -40,6 +40,10 @@ module Nexus
     # a Nexus register
     attr_reader :nexus_command_width
 
+    attr_reader :cpuscr_reg_width
+
+    attr_reader :once_cpuscr_go_exit_instr
+
     def initialize(owner, options = {})
       if defined?(owner.class::NEXUS_CONFIG)
         options = owner.class::NEXUS_CONFIG.merge(options)
@@ -57,7 +61,9 @@ module Nexus
         once_ocmd_width:         10,                   # Width of OnCE OCMD instruction reg in bits
         once_nexus_access_instr: 0b0001111100, # Instruction used to access nexus via OnCE, default: 0x07C.
         once_bypass_instr:       0b0001111111,       # Instruction used to bypass OnCE, default: 0x07F.
+        once_cpuscr_go_exit_instr:     0b0110010000,  # Instruction used to exit debug mode and kick off code execution from desired address.
         nexus_command_width:     8,                # Width of Nexus command data regs, default: 8.
+        cpuscr_reg_width:        192,              # Width of cpuscr reg
       }.merge(options)
 
       # Define JTAG configs based on Nexus config
@@ -69,10 +75,15 @@ module Nexus
       @once_ocmd_width = options[:once_ocmd_width]
       @once_nexus_access_instr = options[:once_nexus_access_instr]
       @once_bypass_instr = options[:once_bypass_instr]
+      @once_cpuscr_go_exit_instr = options[:once_cpuscr_go_exit_instr]
       @nexus_command_width = options[:nexus_command_width]
+      @cpuscr_reg_width = options[:cpuscr_reg_width]
 
       # Define nexus registers
       define_nexus_registers
+
+      # Define CPU registers
+      define_cpu_registers
 
       @owner = owner
     end
@@ -122,6 +133,17 @@ module Nexus
       end
     end
 
+    def define_cpu_registers
+      reg :cpuscr, 0x0, size: 192 do
+        bit 191..160, :ctl  
+        bit 159..128, :ir
+        bit 127..96,  :pc
+        bit 95..64,   :msr
+        bit 63..32,   :wbbrh
+        bit 31..0,    :wbbrl    
+      end
+    end
+
     # Enable Nexus module
     # Loads NEXUS-ACCESS instruction into JTAG Instruction
     # Register (OnCE OCMD register).
@@ -152,6 +174,17 @@ module Nexus
         jtag.write_ir once_bypass_instr, size: once_ocmd_width, msg: log2("Bypass OnCE: OnCE_Send(#{once_ocmd_width}, 0x%02X)" % [once_bypass_instr])
         @ir_reg_value = once_bypass_instr
       end
+    end
+
+    def go_exit(code_start_address = 0x4)
+      jtag.write_ir once_cpuscr_go_exit_instr, size: once_ocmd_width, msg: log2("Enabling CPUSCR register for read/write access")
+      regs(:cpuscr).bit(:wbbrl).write(0x00000000)
+      regs(:cpuscr).bit(:wbbrh).write(0x00000000)
+      regs(:cpuscr).bit(:msr).write(0x00000000)
+      regs(:cpuscr).bit(:pc).write(code_start_address - 4)
+      regs(:cpuscr).bit(:ir).write(0x7c0004ac)  
+      regs(:cpuscr).bit(:ctl).write(0x00000000)
+      jtag.write_dr regs(:cpuscr).value, size: cpuscr_reg_width, msg: log2("Writing GO+EXIT to CPUSCR")
     end
 
     # Write a given Nexus register
