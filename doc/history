@@ -1,3 +1,14 @@
+<a class="anchor release_tag" name="v0_6_0_pre4"></a>
+<h2><a href="#v0_6_0_pre4">Tag: v0.6.0.pre4</a></h2>
+
+##### Branch: 'Trunk'
+
+##### by Jiang Liu on 07-Aug-2015 17:09PM
+
+
+- Added 64 bit, 16bit and 8bit write support.
+- Added new test case pattern for 64 bit write read.
+
 <a class="anchor release_tag" name="v0_6_0_pre3"></a>
 <h2><a href="#v0_6_0_pre3">Tag: v0.6.0.pre3</a></h2>
 

@@ -278,8 +278,21 @@ module Nexus
                undef: true,          # whether IPS being accessed is a register or undefined
                count: 1,             # by default use single address access mode
                overlay: false,                         # default: assume not a real register
-               nexus_init: true
+               nexus_init: true,
+               width: 32,      # default write width to 32 bits
               }.merge(options)
+      if options[:width] == 8
+        write_width = 0b0
+      elsif options[:width] == 16
+        write_width = 0b1
+      elsif  options[:width] == 32
+        write_width = 0b10
+      elsif  options[:width] == 64
+        write_width = 0b11
+      else
+        RGen.log.warn "Nexus 3 width supplied is invalid, defaulting to 32 bit width."
+      end
+        
       if options[:nexus_init]
         enable_nexus_access
       end
@@ -292,7 +305,7 @@ module Nexus
       # Send settings to RWCS
       reg(:rwcs).bits(:ac).write(1)
       reg(:rwcs).bits(:rw).write(options[:write] ? 1 : 0)
-      reg(:rwcs).bits(:sz).write(0b010)                 # word size = 32 bit
+      reg(:rwcs).bits(:sz).write(write_width)                 # write_width, defaul value = 32 bits.
       reg(:rwcs).bits(:map).write(0b000)                # map select = primary
       reg(:rwcs).bits(:pr).write(0b11)                  # priority = highest
       reg(:rwcs).bits(:cnt).write(options[:count])      # single access
@@ -330,20 +343,38 @@ module Nexus
     # block_data = array of 32-bit values of block data to write
     def block_write_access(address, block_data = [], options = {})
       options = { write: true,          # whether to write or read the block
+                  width: 32       # width default to 32 bits
               }.merge(options)
-
       block_data.each_index do |i|
         if i == 0                                  # first do single write access with count > 1
           single_write_access(address, block_data[0], options.merge(count: block_data.count))
+          if options[:width] > 32
+            reg(:rwd).write(block_data[i = i+1])
+            if options[:write]
+              write_nexus_register(reg(:rwd))
+            else
+              read_nexus_register(reg(:rwd))
+            end
+          end
         else
+          next if (i % 2 != 0 and options[:width] > 32)
           reg(:rwd).write(block_data[i])
           if options[:write]
             write_nexus_register(reg(:rwd))
           else
             read_nexus_register(reg(:rwd))
           end
+          if options[:width] > 32
+            reg(:rwd).write(block_data[i = i+1])
+            if options[:write]
+              write_nexus_register(reg(:rwd))
+            else
+              read_nexus_register(reg(:rwd))
+            end
+          end
         end
       end
+
     end
 
     # Block Read of memory-mapped resources

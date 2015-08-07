@@ -1,3 +1,4 @@
 read_write_reg
 read_write_block
+read_write_block_64bit
 subroutines

@@ -1,0 +1,395 @@
+// ***************************************************************************
+// GENERATED:
+//   Time:    07-Aug-2015 13:28PM
+//   By:      Jiang Liu
+//   Command: rgen g read_write_block_64bit -t debug_RH1.rb
+// ***************************************************************************
+// ENVIRONMENT:
+//   Application
+//     Vault:     sync://sync-15088:15088/Projects/common_tester_blocks/rgen_blocks/protocol/Nexus/tool_data/rgen
+//     Version:   0.6.0.pre3
+//     Workspace: /proj/pet5/jiang/nexus
+//   RGen
+//     Vault:     sync://sync-15088:15088/Projects/common_tester_blocks/rgen
+//     Version:   2.5.0.pre139
+//     Workspace: /home/b20251/.rgen/gems/ruby/2.1.0/gems/rgen_core-2.5.0.pre139
+//   Plugins
+//     rgen_jtag:                0.10.1
+// ***************************************************************************
+import tset tp0;                                                                                
+svm_only_file = no;                                                                             
+opcode_mode = extended;                                                                         
+compressed = yes;                                                                               
+                                                                                                
+vector ($tset, tclk, tms, tdi, tdo)                                                             
+{                                                                                               
+start_label pattern_st:                                                                         
+// BLOCK DATA TO WRITE TO ADDRESS: 0x00005A
+//   0x00000000
+//   0x11111111
+//   0x22222222
+//   0x33333333
+// ######################################################################
+// ## Test Block Write
+// ######################################################################
+// Nexus::Driver - Enable Nexus Access: OnCE_Send(10, 0x7C)
+repeat 6                                                         > tp0                          0 1 X X ;
+repeat 2                                                         > tp0                          0 0 X X ;
+repeat 2                                                         > tp0                          0 1 X X ;
+repeat 2                                                         > tp0                          0 0 X X ;
+// JTAG::TAPController - **** Data start ****
+repeat 2                                                         > tp0                          0 0 0 X ;
+repeat 5                                                         > tp0                          0 0 1 X ;
+repeat 2                                                         > tp0                          0 0 0 X ;
+                                                                 > tp0                          0 1 0 X ;
+// JTAG::TAPController - **** Data stop ****
+                                                                 > tp0                          0 1 0 X ;
+                                                                 > tp0                          0 0 0 X ;
+// Nexus::Driver - Write Nexus Reg: RWA at 0x0013 with 0x0000005A
+// Nexus::Driver - OnCE_Send(8, 0x13)
+                                                                 > tp0                          0 1 0 X ;
+repeat 2                                                         > tp0                          0 0 0 X ;
+// JTAG::TAPController - **** Data start ****
+repeat 2                                                         > tp0                          0 0 1 X ;
+repeat 2                                                         > tp0                          0 0 0 X ;
+                                                                 > tp0                          0 0 1 X ;
+repeat 2                                                         > tp0                          0 0 0 X ;
+                                                                 > tp0                          0 1 0 X ;
+// JTAG::TAPController - **** Data stop ****
+                                                                 > tp0                          0 1 0 X ;
+                                                                 > tp0                          0 0 0 X ;
+// Nexus::Driver - OnCE_Send(32, 0x0000005A)
+                                                                 > tp0                          0 1 0 X ;
+repeat 2                                                         > tp0                          0 0 0 X ;
+// JTAG::TAPController - **** Data start ****
+                                                                 > tp0                          0 0 0 X ;
+                                                                 > tp0                          0 0 1 X ;
+                                                                 > tp0                          0 0 0 X ;
+repeat 2                                                         > tp0                          0 0 1 X ;
+                                                                 > tp0                          0 0 0 X ;
+                                                                 > tp0                          0 0 1 X ;
+repeat 24                                                        > tp0                          0 0 0 X ;
+                                                                 > tp0                          0 1 0 X ;
+// JTAG::TAPController - **** Data stop ****
+                                                                 > tp0                          0 1 0 X ;
+                                                                 > tp0                          0 0 0 X ;
+// Nexus::Driver - Write Nexus Reg: RWCS at 0x000F with 0xD8C00010
+// Nexus::Driver - OnCE_Send(8, 0x0F)
+                                                                 > tp0                          0 1 0 X ;
+repeat 2                                                         > tp0                          0 0 0 X ;
+// JTAG::TAPController - **** Data start ****
+repeat 4                                                         > tp0                          0 0 1 X ;
+repeat 3                                                         > tp0                          0 0 0 X ;
+                                                                 > tp0                          0 1 0 X ;
+// JTAG::TAPController - **** Data stop ****
+                                                                 > tp0                          0 1 0 X ;
+                                                                 > tp0                          0 0 0 X ;
+// Nexus::Driver - OnCE_Send(32, 0xD8C00010)
+                                                                 > tp0                          0 1 0 X ;
+repeat 2                                                         > tp0                          0 0 0 X ;
+// JTAG::TAPController - **** Data start ****
+repeat 4                                                         > tp0                          0 0 0 X ;
+                                                                 > tp0                          0 0 1 X ;
+repeat 17                                                        > tp0                          0 0 0 X ;
+repeat 2                                                         > tp0                          0 0 1 X ;
+repeat 3                                                         > tp0                          0 0 0 X ;
+repeat 2                                                         > tp0                          0 0 1 X ;
+                                                                 > tp0                          0 0 0 X ;
+                                                                 > tp0                          0 0 1 X ;
+                                                                 > tp0                          0 1 1 X ;
+// JTAG::TAPController - **** Data stop ****
+                                                                 > tp0                          0 1 1 X ;
+                                                                 > tp0                          0 0 1 X ;
+// Nexus::Driver - Write Nexus Reg: RWD at 0x0015 with 0x00000000
+// Nexus::Driver - OnCE_Send(8, 0x15)
+                                                                 > tp0                          0 1 1 X ;
+repeat 2                                                         > tp0                          0 0 1 X ;
+// JTAG::TAPController - **** Data start ****
+                                                                 > tp0                          0 0 1 X ;
+                                                                 > tp0                          0 0 0 X ;
+                                                                 > tp0                          0 0 1 X ;
+                                                                 > tp0                          0 0 0 X ;
+                                                                 > tp0                          0 0 1 X ;
+repeat 2                                                         > tp0                          0 0 0 X ;
+                                                                 > tp0                          0 1 0 X ;
+// JTAG::TAPController - **** Data stop ****
+                                                                 > tp0                          0 1 0 X ;
+                                                                 > tp0                          0 0 0 X ;
+// Nexus::Driver - OnCE_Send(32, 0x00000000)
+                                                                 > tp0                          0 1 0 X ;
+repeat 2                                                         > tp0                          0 0 0 X ;
+// JTAG::TAPController - **** Data start ****
+repeat 31                                                        > tp0                          0 0 0 X ;
+                                                                 > tp0                          0 1 0 X ;
+// JTAG::TAPController - **** Data stop ****
+                                                                 > tp0                          0 1 0 X ;
+                                                                 > tp0                          0 0 0 X ;
+// Nexus::Driver - Write Nexus Reg: RWD at 0x0015 with 0x11111111
+// Nexus::Driver - OnCE_Send(8, 0x15)
+                                                                 > tp0                          0 1 0 X ;
+repeat 2                                                         > tp0                          0 0 0 X ;
+// JTAG::TAPController - **** Data start ****
+                                                                 > tp0                          0 0 1 X ;
+                                                                 > tp0                          0 0 0 X ;
+                                                                 > tp0                          0 0 1 X ;
+                                                                 > tp0                          0 0 0 X ;
+                                                                 > tp0                          0 0 1 X ;
+repeat 2                                                         > tp0                          0 0 0 X ;
+                                                                 > tp0                          0 1 0 X ;
+// JTAG::TAPController - **** Data stop ****
+                                                                 > tp0                          0 1 0 X ;
+                                                                 > tp0                          0 0 0 X ;
+// Nexus::Driver - OnCE_Send(32, 0x11111111)
+                                                                 > tp0                          0 1 0 X ;
+repeat 2                                                         > tp0                          0 0 0 X ;
+// JTAG::TAPController - **** Data start ****
+                                                                 > tp0                          0 0 1 X ;
+repeat 3                                                         > tp0                          0 0 0 X ;
+                                                                 > tp0                          0 0 1 X ;
+repeat 3                                                         > tp0                          0 0 0 X ;
+                                                                 > tp0                          0 0 1 X ;
+repeat 3                                                         > tp0                          0 0 0 X ;
+                                                                 > tp0                          0 0 1 X ;
+repeat 3                                                         > tp0                          0 0 0 X ;
+                                                                 > tp0                          0 0 1 X ;
+repeat 3                                                         > tp0                          0 0 0 X ;
+                                                                 > tp0                          0 0 1 X ;
+repeat 3                                                         > tp0                          0 0 0 X ;
+                                                                 > tp0                          0 0 1 X ;
+repeat 3                                                         > tp0                          0 0 0 X ;
+                                                                 > tp0                          0 0 1 X ;
+repeat 2                                                         > tp0                          0 0 0 X ;
+                                                                 > tp0                          0 1 0 X ;
+// JTAG::TAPController - **** Data stop ****
+                                                                 > tp0                          0 1 0 X ;
+                                                                 > tp0                          0 0 0 X ;
+// Nexus::Driver - Write Nexus Reg: RWD at 0x0015 with 0x22222222
+// Nexus::Driver - OnCE_Send(8, 0x15)
+                                                                 > tp0                          0 1 0 X ;
+repeat 2                                                         > tp0                          0 0 0 X ;
+// JTAG::TAPController - **** Data start ****
+                                                                 > tp0                          0 0 1 X ;
+                                                                 > tp0                          0 0 0 X ;
+                                                                 > tp0                          0 0 1 X ;
+                                                                 > tp0                          0 0 0 X ;
+                                                                 > tp0                          0 0 1 X ;
+repeat 2                                                         > tp0                          0 0 0 X ;
+                                                                 > tp0                          0 1 0 X ;
+// JTAG::TAPController - **** Data stop ****
+                                                                 > tp0                          0 1 0 X ;
+                                                                 > tp0                          0 0 0 X ;
+// Nexus::Driver - OnCE_Send(32, 0x22222222)
+                                                                 > tp0                          0 1 0 X ;
+repeat 2                                                         > tp0                          0 0 0 X ;
+// JTAG::TAPController - **** Data start ****
+                                                                 > tp0                          0 0 0 X ;
+                                                                 > tp0                          0 0 1 X ;
+repeat 3                                                         > tp0                          0 0 0 X ;
+                                                                 > tp0                          0 0 1 X ;
+repeat 3                                                         > tp0                          0 0 0 X ;
+                                                                 > tp0                          0 0 1 X ;
+repeat 3                                                         > tp0                          0 0 0 X ;
+                                                                 > tp0                          0 0 1 X ;
+repeat 3                                                         > tp0                          0 0 0 X ;
+                                                                 > tp0                          0 0 1 X ;
+repeat 3                                                         > tp0                          0 0 0 X ;
+                                                                 > tp0                          0 0 1 X ;
+repeat 3                                                         > tp0                          0 0 0 X ;
+                                                                 > tp0                          0 0 1 X ;
+repeat 3                                                         > tp0                          0 0 0 X ;
+                                                                 > tp0                          0 0 1 X ;
+                                                                 > tp0                          0 0 0 X ;
+                                                                 > tp0                          0 1 0 X ;
+// JTAG::TAPController - **** Data stop ****
+                                                                 > tp0                          0 1 0 X ;
+                                                                 > tp0                          0 0 0 X ;
+// Nexus::Driver - Write Nexus Reg: RWD at 0x0015 with 0x33333333
+// Nexus::Driver - OnCE_Send(8, 0x15)
+                                                                 > tp0                          0 1 0 X ;
+repeat 2                                                         > tp0                          0 0 0 X ;
+// JTAG::TAPController - **** Data start ****
+                                                                 > tp0                          0 0 1 X ;
+                                                                 > tp0                          0 0 0 X ;
+                                                                 > tp0                          0 0 1 X ;
+                                                                 > tp0                          0 0 0 X ;
+                                                                 > tp0                          0 0 1 X ;
+repeat 2                                                         > tp0                          0 0 0 X ;
+                                                                 > tp0                          0 1 0 X ;
+// JTAG::TAPController - **** Data stop ****
+                                                                 > tp0                          0 1 0 X ;
+                                                                 > tp0                          0 0 0 X ;
+// Nexus::Driver - OnCE_Send(32, 0x33333333)
+                                                                 > tp0                          0 1 0 X ;
+repeat 2                                                         > tp0                          0 0 0 X ;
+// JTAG::TAPController - **** Data start ****
+repeat 2                                                         > tp0                          0 0 1 X ;
+repeat 2                                                         > tp0                          0 0 0 X ;
+repeat 2                                                         > tp0                          0 0 1 X ;
+repeat 2                                                         > tp0                          0 0 0 X ;
+repeat 2                                                         > tp0                          0 0 1 X ;
+repeat 2                                                         > tp0                          0 0 0 X ;
+repeat 2                                                         > tp0                          0 0 1 X ;
+repeat 2                                                         > tp0                          0 0 0 X ;
+repeat 2                                                         > tp0                          0 0 1 X ;
+repeat 2                                                         > tp0                          0 0 0 X ;
+repeat 2                                                         > tp0                          0 0 1 X ;
+repeat 2                                                         > tp0                          0 0 0 X ;
+repeat 2                                                         > tp0                          0 0 1 X ;
+repeat 2                                                         > tp0                          0 0 0 X ;
+repeat 2                                                         > tp0                          0 0 1 X ;
+                                                                 > tp0                          0 0 0 X ;
+                                                                 > tp0                          0 1 0 X ;
+// JTAG::TAPController - **** Data stop ****
+                                                                 > tp0                          0 1 0 X ;
+                                                                 > tp0                          0 0 0 X ;
+// ######################################################################
+// ## Test Block Read
+// ######################################################################
+// Nexus::Driver - Write Nexus Reg: RWA at 0x0013 with 0x0000005A
+// Nexus::Driver - OnCE_Send(8, 0x13)
+                                                                 > tp0                          0 1 0 X ;
+repeat 2                                                         > tp0                          0 0 0 X ;
+// JTAG::TAPController - **** Data start ****
+repeat 2                                                         > tp0                          0 0 1 X ;
+repeat 2                                                         > tp0                          0 0 0 X ;
+                                                                 > tp0                          0 0 1 X ;
+repeat 2                                                         > tp0                          0 0 0 X ;
+                                                                 > tp0                          0 1 0 X ;
+// JTAG::TAPController - **** Data stop ****
+                                                                 > tp0                          0 1 0 X ;
+                                                                 > tp0                          0 0 0 X ;
+// Nexus::Driver - OnCE_Send(32, 0x0000005A)
+                                                                 > tp0                          0 1 0 X ;
+repeat 2                                                         > tp0                          0 0 0 X ;
+// JTAG::TAPController - **** Data start ****
+                                                                 > tp0                          0 0 0 X ;
+                                                                 > tp0                          0 0 1 X ;
+                                                                 > tp0                          0 0 0 X ;
+repeat 2                                                         > tp0                          0 0 1 X ;
+                                                                 > tp0                          0 0 0 X ;
+                                                                 > tp0                          0 0 1 X ;
+repeat 24                                                        > tp0                          0 0 0 X ;
+                                                                 > tp0                          0 1 0 X ;
+// JTAG::TAPController - **** Data stop ****
+                                                                 > tp0                          0 1 0 X ;
+                                                                 > tp0                          0 0 0 X ;
+// Nexus::Driver - Write Nexus Reg: RWCS at 0x000F with 0x98C00010
+// Nexus::Driver - OnCE_Send(8, 0x0F)
+                                                                 > tp0                          0 1 0 X ;
+repeat 2                                                         > tp0                          0 0 0 X ;
+// JTAG::TAPController - **** Data start ****
+repeat 4                                                         > tp0                          0 0 1 X ;
+repeat 3                                                         > tp0                          0 0 0 X ;
+                                                                 > tp0                          0 1 0 X ;
+// JTAG::TAPController - **** Data stop ****
+                                                                 > tp0                          0 1 0 X ;
+                                                                 > tp0                          0 0 0 X ;
+// Nexus::Driver - OnCE_Send(32, 0x98C00010)
+                                                                 > tp0                          0 1 0 X ;
+repeat 2                                                         > tp0                          0 0 0 X ;
+// JTAG::TAPController - **** Data start ****
+repeat 4                                                         > tp0                          0 0 0 X ;
+                                                                 > tp0                          0 0 1 X ;
+repeat 17                                                        > tp0                          0 0 0 X ;
+repeat 2                                                         > tp0                          0 0 1 X ;
+repeat 3                                                         > tp0                          0 0 0 X ;
+repeat 2                                                         > tp0                          0 0 1 X ;
+repeat 2                                                         > tp0                          0 0 0 X ;
+                                                                 > tp0                          0 1 1 X ;
+// JTAG::TAPController - **** Data stop ****
+                                                                 > tp0                          0 1 1 X ;
+                                                                 > tp0                          0 0 1 X ;
+// Nexus::Driver - Read Nexus Reg: RWD at 0x0014 with 0x00000000
+// Nexus::Driver - OnCE_Send(8, 0x14)
+                                                                 > tp0                          0 1 1 X ;
+repeat 2                                                         > tp0                          0 0 1 X ;
+// JTAG::TAPController - **** Data start ****
+repeat 2                                                         > tp0                          0 0 0 X ;
+                                                                 > tp0                          0 0 1 X ;
+                                                                 > tp0                          0 0 0 X ;
+                                                                 > tp0                          0 0 1 X ;
+repeat 2                                                         > tp0                          0 0 0 X ;
+                                                                 > tp0                          0 1 0 X ;
+// JTAG::TAPController - **** Data stop ****
+                                                                 > tp0                          0 1 0 X ;
+                                                                 > tp0                          0 0 0 X ;
+// Nexus::Driver - OnCE_Read(32, 0x00000000)
+                                                                 > tp0                          0 1 0 X ;
+repeat 2                                                         > tp0                          0 0 0 X ;
+// JTAG::TAPController - **** Data start ****
+repeat 31                                                        > tp0                          0 0 0 L ;
+                                                                 > tp0                          0 1 0 L ;
+// JTAG::TAPController - **** Data stop ****
+                                                                 > tp0                          0 1 0 X ;
+                                                                 > tp0                          0 0 0 X ;
+// Nexus::Driver - Read Nexus Reg: RWD at 0x0014 with 0x11111111
+// Nexus::Driver - OnCE_Send(8, 0x14)
+                                                                 > tp0                          0 1 0 X ;
+repeat 2                                                         > tp0                          0 0 0 X ;
+// JTAG::TAPController - **** Data start ****
+repeat 2                                                         > tp0                          0 0 0 X ;
+                                                                 > tp0                          0 0 1 X ;
+                                                                 > tp0                          0 0 0 X ;
+                                                                 > tp0                          0 0 1 X ;
+repeat 2                                                         > tp0                          0 0 0 X ;
+                                                                 > tp0                          0 1 0 X ;
+// JTAG::TAPController - **** Data stop ****
+                                                                 > tp0                          0 1 0 X ;
+                                                                 > tp0                          0 0 0 X ;
+// Nexus::Driver - OnCE_Read(32, 0x11111111)
+                                                                 > tp0                          0 1 0 X ;
+repeat 2                                                         > tp0                          0 0 0 X ;
+// JTAG::TAPController - **** Data start ****
+repeat 31                                                        > tp0                          0 0 0 X ;
+                                                                 > tp0                          0 1 0 X ;
+// JTAG::TAPController - **** Data stop ****
+                                                                 > tp0                          0 1 0 X ;
+                                                                 > tp0                          0 0 0 X ;
+// Nexus::Driver - Read Nexus Reg: RWD at 0x0014 with 0x22222222
+// Nexus::Driver - OnCE_Send(8, 0x14)
+                                                                 > tp0                          0 1 0 X ;
+repeat 2                                                         > tp0                          0 0 0 X ;
+// JTAG::TAPController - **** Data start ****
+repeat 2                                                         > tp0                          0 0 0 X ;
+                                                                 > tp0                          0 0 1 X ;
+                                                                 > tp0                          0 0 0 X ;
+                                                                 > tp0                          0 0 1 X ;
+repeat 2                                                         > tp0                          0 0 0 X ;
+                                                                 > tp0                          0 1 0 X ;
+// JTAG::TAPController - **** Data stop ****
+                                                                 > tp0                          0 1 0 X ;
+                                                                 > tp0                          0 0 0 X ;
+// Nexus::Driver - OnCE_Read(32, 0x22222222)
+                                                                 > tp0                          0 1 0 X ;
+repeat 2                                                         > tp0                          0 0 0 X ;
+// JTAG::TAPController - **** Data start ****
+repeat 31                                                        > tp0                          0 0 0 X ;
+                                                                 > tp0                          0 1 0 X ;
+// JTAG::TAPController - **** Data stop ****
+                                                                 > tp0                          0 1 0 X ;
+                                                                 > tp0                          0 0 0 X ;
+// Nexus::Driver - Read Nexus Reg: RWD at 0x0014 with 0x33333333
+// Nexus::Driver - OnCE_Send(8, 0x14)
+                                                                 > tp0                          0 1 0 X ;
+repeat 2                                                         > tp0                          0 0 0 X ;
+// JTAG::TAPController - **** Data start ****
+repeat 2                                                         > tp0                          0 0 0 X ;
+                                                                 > tp0                          0 0 1 X ;
+                                                                 > tp0                          0 0 0 X ;
+                                                                 > tp0                          0 0 1 X ;
+repeat 2                                                         > tp0                          0 0 0 X ;
+                                                                 > tp0                          0 1 0 X ;
+// JTAG::TAPController - **** Data stop ****
+                                                                 > tp0                          0 1 0 X ;
+                                                                 > tp0                          0 0 0 X ;
+// Nexus::Driver - OnCE_Read(32, 0x33333333)
+                                                                 > tp0                          0 1 0 X ;
+repeat 2                                                         > tp0                          0 0 0 X ;
+// JTAG::TAPController - **** Data start ****
+repeat 31                                                        > tp0                          0 0 0 X ;
+                                                                 > tp0                          0 1 0 X ;
+// JTAG::TAPController - **** Data stop ****
+                                                                 > tp0                          0 1 0 X ;
+                                                                 > tp0                          0 0 0 X ;
+end_module                                                       > tp0                          0 0 0 X ;
+}                                                                                               
