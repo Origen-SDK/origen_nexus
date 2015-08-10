@@ -191,6 +191,7 @@ module Nexus
     def write_nexus_register(reg_or_val, options = {})
       options = { write: true,        # whether to write or read
                   overlay: false,
+                  care_out: false,
                 }.merge(options)     
       addr = exact_address(reg_or_val, options)     
       if options[:write] then addr = addr + 1 end # offset address by 1 since writing
@@ -213,10 +214,17 @@ module Nexus
         data = exact_data(reg_or_val, options)
       end
 
+      if options[:capture]
+          reg(reg_or_val.name).store
+      end
+
       if options[:write]
         # second pass : pass data to register
         jtag.write_dr reg_or_val, overlay: options[:overlay], overlay_label: options[:overlay_label], size: size, msg: log2("OnCE_Send(#{size}, 0x%08X)" % [ data ])
       else
+        if options[:care_output]
+          reg(reg_or_val.name).read 
+        end
         # second pass : read data from register
         jtag.read_dr(reg_or_val, overlay: options[:overlay], overlay_label: options[:overlay_label], size: size, msg: log2("OnCE_Read(#{size}, 0x%08X)" % [ data ]))
       end
@@ -351,25 +359,25 @@ module Nexus
           if options[:width] > 32
             reg(:rwd).write(block_data[i = i+1])
             if options[:write]
-              write_nexus_register(reg(:rwd))
+              write_nexus_register(reg(:rwd), options)
             else
-              read_nexus_register(reg(:rwd))
+              read_nexus_register(reg(:rwd), options)
             end
           end
         else
           next if (i % 2 != 0 and options[:width] > 32)
           reg(:rwd).write(block_data[i])
           if options[:write]
-            write_nexus_register(reg(:rwd))
+            write_nexus_register(reg(:rwd), options)
           else
-            read_nexus_register(reg(:rwd))
+            read_nexus_register(reg(:rwd), options)
           end
           if options[:width] > 32
             reg(:rwd).write(block_data[i = i+1])
             if options[:write]
-              write_nexus_register(reg(:rwd))
+              write_nexus_register(reg(:rwd), options)
             else
-              read_nexus_register(reg(:rwd))
+              read_nexus_register(reg(:rwd), options)
             end
           end
         end

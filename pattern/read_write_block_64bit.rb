@@ -20,4 +20,9 @@ options = {}.merge(options)
   ss "Test Block Read"
   $dut.nexus.block_read_access block_address, block_data, options.merge(width: 64)
 
+  ss "Test Block Read and strobing on output"
+  $dut.nexus.block_read_access block_address, block_data, options.merge(care_output: true)
+ 
+  ss "Test Block read out to HRAM"
+  $dut.nexus.block_read_access block_address, block_data, options.merge(capture: true)
 end

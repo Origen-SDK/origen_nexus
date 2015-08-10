@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    rgen_nexus (0.6.0.pre4)
+    rgen_nexus (0.6.0.pre5)
       rgen_core (>= 2.5.0.pre51)
       rgen_jtag (>= 0.10.1)
 
