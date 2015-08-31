@@ -51,19 +51,19 @@ module OrigenNexus
 
       # Fallback defaults
       options = {
-        tclk_format:             :rh,                      # format of JTAG clock used:  ReturnHigh (:rh), ReturnLo (:rl)
-        tclk_multiple:           1,                      # number of cycles for one clock pulse, assumes 50% duty cycle. Uses tester non-return format to spread TCK across multiple cycles.
+        tclk_format:               :rh,                      # format of JTAG clock used:  ReturnHigh (:rh), ReturnLo (:rl)
+        tclk_multiple:             1,                      # number of cycles for one clock pulse, assumes 50% duty cycle. Uses tester non-return format to spread TCK across multiple cycles.
         #    e.g. @tclk_multiple = 2, @tclk_format = :rh, means one cycle with Tck low (non-return), one with Tck high (NR)
         #         @tclk_multiple = 4, @tclk_format = :rl, means 2 cycles with Tck high (NR), 2 with Tck low (NR)
-        tdo_strobe:              :tclk_high,                # when using multiple cycles for TCK, which state of TCK to strobe for TDO, :tclk_high or :tclk_low or :tclk_all
-        tdo_store_cycle:         0,                    # store vector cycle within TCK (i.e. when to indicate to tester to store vector within TCK cycle.  0 is first vector, 1 is second, etc.)
+        tdo_strobe:                :tclk_high,                # when using multiple cycles for TCK, which state of TCK to strobe for TDO, :tclk_high or :tclk_low or :tclk_all
+        tdo_store_cycle:           0,                    # store vector cycle within TCK (i.e. when to indicate to tester to store vector within TCK cycle.  0 is first vector, 1 is second, etc.)
         #
-        once_ocmd_width:         10,                   # Width of OnCE OCMD instruction reg in bits
-        once_nexus_access_instr: 0b0001111100, # Instruction used to access nexus via OnCE, default: 0x07C.
-        once_bypass_instr:       0b0001111111,       # Instruction used to bypass OnCE, default: 0x07F.
-        once_cpuscr_go_exit_instr:     0b0110010000,  # Instruction used to exit debug mode and kick off code execution from desired address.
-        nexus_command_width:     8,                # Width of Nexus command data regs, default: 8.
-        cpuscr_reg_width:        192,              # Width of cpuscr reg
+        once_ocmd_width:           10,                   # Width of OnCE OCMD instruction reg in bits
+        once_nexus_access_instr:   0b0001111100, # Instruction used to access nexus via OnCE, default: 0x07C.
+        once_bypass_instr:         0b0001111111,       # Instruction used to bypass OnCE, default: 0x07F.
+        once_cpuscr_go_exit_instr: 0b0110010000,  # Instruction used to exit debug mode and kick off code execution from desired address.
+        nexus_command_width:       8,                # Width of Nexus command data regs, default: 8.
+        cpuscr_reg_width:          192,              # Width of cpuscr reg
       }.merge(options)
 
       # Define JTAG configs based on Nexus config
@@ -117,7 +117,6 @@ module OrigenNexus
         bit 15..2,  :cnt
         bit 1,      :err, writable: false
         bit 0,      :dv, writable: false
-
       end
 
       # RWD - Read/Write Access Data
@@ -135,12 +134,12 @@ module OrigenNexus
 
     def define_cpu_registers
       reg :cpuscr, 0x0, size: 192 do
-        bit 191..160, :ctl  
+        bit 191..160, :ctl
         bit 159..128, :ir
         bit 127..96,  :pc
         bit 95..64,   :msr
         bit 63..32,   :wbbrh
-        bit 31..0,    :wbbrl    
+        bit 31..0,    :wbbrl
       end
     end
 
@@ -177,24 +176,24 @@ module OrigenNexus
     end
 
     def go_exit(code_start_address = 0x4)
-      jtag.write_ir once_cpuscr_go_exit_instr, size: once_ocmd_width, msg: log2("Enabling CPUSCR register for read/write access")
+      jtag.write_ir once_cpuscr_go_exit_instr, size: once_ocmd_width, msg: log2('Enabling CPUSCR register for read/write access')
       regs(:cpuscr).bit(:wbbrl).write(0x00000000)
       regs(:cpuscr).bit(:wbbrh).write(0x00000000)
       regs(:cpuscr).bit(:msr).write(0x00000000)
       regs(:cpuscr).bit(:pc).write(code_start_address - 4)
-      regs(:cpuscr).bit(:ir).write(0x7c0004ac)  
+      regs(:cpuscr).bit(:ir).write(0x7c0004ac)
       regs(:cpuscr).bit(:ctl).write(0x00000000)
-      jtag.write_dr regs(:cpuscr).value, size: cpuscr_reg_width, msg: log2("Writing GO+EXIT to CPUSCR")
+      jtag.write_dr regs(:cpuscr).value, size: cpuscr_reg_width, msg: log2('Writing GO+EXIT to CPUSCR')
     end
 
     # Write a given Nexus register
     def write_nexus_register(reg_or_val, options = {})
-      options = { write: true,        # whether to write or read
-                  overlay: false,
-                  care_out: false,
-                }.merge(options)     
-      addr = exact_address(reg_or_val, options)     
-      if options[:write] then addr = addr + 1 end # offset address by 1 since writing
+      options = { write:    true,        # whether to write or read
+                  overlay:  false,
+                  care_out: false
+                }.merge(options)
+      addr = exact_address(reg_or_val, options)
+      addr += 1 if options[:write] # offset address by 1 since writing
       data = exact_data(reg_or_val, options)
       size = exact_size(reg_or_val, options)
       name = exact_name(reg_or_val, options)
@@ -215,18 +214,18 @@ module OrigenNexus
       end
 
       if options[:capture]
-          reg(reg_or_val.name).store
+        reg(reg_or_val.name).store
       end
 
       if options[:write]
         # second pass : pass data to register
-        jtag.write_dr reg_or_val, overlay: options[:overlay], overlay_label: options[:overlay_label], size: size, msg: log2("OnCE_Send(#{size}, 0x%08X)" % [ data ])
+        jtag.write_dr reg_or_val, overlay: options[:overlay], overlay_label: options[:overlay_label], size: size, msg: log2("OnCE_Send(#{size}, 0x%08X)" % [data])
       else
         if options[:care_output]
-          reg(reg_or_val.name).read 
+          reg(reg_or_val.name).read
         end
         # second pass : read data from register
-        jtag.read_dr(reg_or_val, overlay: options[:overlay], overlay_label: options[:overlay_label], size: size, msg: log2("OnCE_Read(#{size}, 0x%08X)" % [ data ]))
+        jtag.read_dr(reg_or_val, overlay: options[:overlay], overlay_label: options[:overlay_label], size: size, msg: log2("OnCE_Read(#{size}, 0x%08X)" % [data]))
       end
     end
 
@@ -282,12 +281,12 @@ module OrigenNexus
     # Single Write to memory-mapped resource
     # for now only supports 32-bit data
     def single_write_access(address, data, options = {})
-      options={write: true,          # whether to write or read the register
-               undef: true,          # whether IPS being accessed is a register or undefined
-               count: 1,             # by default use single address access mode
-               overlay: false,                         # default: assume not a real register
-               nexus_init: true,
-               width: 32,      # default write width to 32 bits
+      options = { write:      true,          # whether to write or read the register
+                  undef:      true,          # whether IPS being accessed is a register or undefined
+                  count:      1,             # by default use single address access mode
+                  overlay:    false,                         # default: assume not a real register
+                  nexus_init: true,
+                  width:      32,      # default write width to 32 bits
               }.merge(options)
       if options[:width] == 8
         write_width = 0b0
@@ -298,9 +297,9 @@ module OrigenNexus
       elsif  options[:width] == 64
         write_width = 0b11
       else
-        Origen.log.warn "Nexus 3 width supplied is invalid, defaulting to 32 bit width."
+        Origen.log.warn 'Nexus 3 width supplied is invalid, defaulting to 32 bit width.'
       end
-        
+
       if options[:nexus_init]
         enable_nexus_access
       end
@@ -325,7 +324,7 @@ module OrigenNexus
         # Send command to write RWD reg
         # Send data value to be written to RWD reg
         reg(:rwd).write(data)
-        write_nexus_register(reg(:rwd), options.reject{|x| x == :address})
+        write_nexus_register(reg(:rwd), options.reject { |x| x == :address })
       else
         # If undefined reg, then mark all bits for read
         if options[:undef]
@@ -334,7 +333,7 @@ module OrigenNexus
         # Send command to read RWD reg
         # Read RWD reg value
         reg(:rwd).write(data)
-        read_nexus_register(reg(:rwd), options.reject{|x| x == :address})
+        read_nexus_register(reg(:rwd), options.reject { |x| x == :address })
       end
     end
 
@@ -357,7 +356,7 @@ module OrigenNexus
         if i == 0                                  # first do single write access with count > 1
           single_write_access(address, block_data[0], options.merge(count: block_data.count))
           if options[:width] > 32
-            reg(:rwd).write(block_data[i = i+1])
+            reg(:rwd).write(block_data[i = i + 1])
             if options[:write]
               write_nexus_register(reg(:rwd), options)
             else
@@ -365,7 +364,7 @@ module OrigenNexus
             end
           end
         else
-          next if (i % 2 != 0 and options[:width] > 32)
+          next if i.odd? && options[:width] > 32
           reg(:rwd).write(block_data[i])
           if options[:write]
             write_nexus_register(reg(:rwd), options)
@@ -373,7 +372,7 @@ module OrigenNexus
             read_nexus_register(reg(:rwd), options)
           end
           if options[:width] > 32
-            reg(:rwd).write(block_data[i = i+1])
+            reg(:rwd).write(block_data[i = i + 1])
             if options[:write]
               write_nexus_register(reg(:rwd), options)
             else
@@ -382,7 +381,6 @@ module OrigenNexus
           end
         end
       end
-
     end
 
     # Block Read of memory-mapped resources
@@ -440,8 +438,8 @@ module OrigenNexus
     #                        will override the register's address.
     #
     def write_register(reg_or_val, options = {})
-      options = { write: true,    # whether to write or read the register
-                  overlay: false,
+      options = { write:   true,    # whether to write or read the register
+                  overlay: false
               }.merge(options)
       address = exact_address(reg_or_val, options)
       data = exact_data(reg_or_val, options)
@@ -490,7 +488,7 @@ module OrigenNexus
     # Provides exact address value either if a defined register is
     # provided or if an address is provided
     def exact_address(reg_or_val, options = {})
-      address = options[:addr] || options[:address] 
+      address = options[:addr] || options[:address]
       unless address
         # if no address provided as option then use register address
         if real_reg?(reg_or_val)             # if real register

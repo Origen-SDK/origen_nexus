@@ -19,6 +19,18 @@ class OrigenNexusApplication < Origen::Application
   #config.production_targets = {
   #  "1m79x" => "production",
   #}
+  
+  # Set up lint test
+  config.lint_test = {
+    # Require the lint tests to pass before allowing a release to proceed
+    :run_on_tag => true,
+    # Auto correct violations where possible whenever 'origen lint' is run
+    :auto_correct => true,
+    # Limit the testing for large legacy applications
+    #:level => :easy,
+    # Run on these directories/files by default
+    #:files => ["lib", "config/application.rb"],
+  }
 
   # Versioning is based on a timestamp by default, if you would rather use semantic
   # versioning, i.e. v1.0.0 format, then set this to true.
