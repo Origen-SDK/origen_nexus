@@ -1,18 +1,20 @@
 // ***************************************************************************
 // GENERATED:
-//   Time:    08-Apr-2014 15:20PM
-//   By:      Daniel Hadad
-//   Command: rgen g read_write_reg -t debug_RH4.rb
+//   Time:    31-Aug-2015 11:13AM
+//   By:      Stephen McGinty
+//   Command: origen g read_write_reg -t debug_RH4.rb
 // ***************************************************************************
 // ENVIRONMENT:
 //   Application
-//     Vault:     sync://sync-15088:15088/Projects/common_tester_blocks/rgen_blocks/protocol/Nexus/tool_data/rgen
-//     Version:   v0.3.0
-//     Workspace: /proj/pet3/C55FMC/nexus_v0.3.0
-//   RGen
-//     Vault:     sync://sync-15088:15088/Projects/common_tester_blocks/rgen
-//     Version:   v2.3.0.dev37
-//     Workspace: /proj/pet3/C55FMC/rgen_top_v2.3.0.dev37
+//     Source:    git@github.com:Origen-SDK/origen_nexus.git
+//     Version:   0.6.0.pre6
+//     Branch:    master(e0f129fe9d0) (+local edits)
+//   Origen
+//     Source:    https://github.com/Origen-SDK/origen
+//     Version:   0.2.6
+//   Plugins
+//     origen_doc_helpers:       0.2.0
+//     origen_jtag:              0.12.0
 // ***************************************************************************
 import tset tp0;                                                                                
 import svm_subr write_overlay;                                                                  

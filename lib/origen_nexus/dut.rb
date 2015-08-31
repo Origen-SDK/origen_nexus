@@ -1,13 +1,13 @@
-module Nexus
+module OrigenNexus
   # This is a dummy DUT model that provides an example of how
   # the Nexus module should be included
   class DUT
     # Include the Nexus protocol
-    include Nexus
+    include OrigenNexus
 
-    include RGen::Callbacks
-    include RGen::Pins
-    include RGen::Registers
+    include Origen::Callbacks
+    include Origen::Pins
+    include Origen::Registers
 
     NEXUS_CONFIG = {
       tclk_format:   :rh,
@@ -74,7 +74,7 @@ module Nexus
   # used to test that Nexus will use the host's
   # JTAG if present
   class DUTWithJTAG
-    include Nexus
+    include OrigenNexus
 
     # basically if this attribute available then shows that DUTWithJTAG's
     # JTAG driver was used instead of imported JTAG driver class.

@@ -1,6 +1,5 @@
 ---
-layout: bootstrap
-title: <%= options[:title] || RGen.config.name %>
+title: <%= options[:title] || Origen.config.name %>
 ---
 <%= render "templates/web/partials/navbar.html", :tab => options[:tab] %>
 
@@ -9,6 +8,8 @@ title: <%= options[:title] || RGen.config.name %>
 %# in markdown, without this is will be included verbatim
   <div class="span12" markdown="1">
 <%= yield %>    
+
+<%= disqus_comments %>
 
 </div>
 </div>

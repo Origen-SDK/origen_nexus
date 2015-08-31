@@ -2,44 +2,44 @@
 
 %# HTML tags can be embedded in mark down files if you want to do specific custom
 %# formatting like this, but in most cases that is not required.
-<h1><%= RGen.config.name %> <span style="font-size: 14px">(<%= RGen.app.version %>)</span></h1>
+<h1><%= Origen.config.name %> <span style="font-size: 14px">(<%= Origen.app.version %>)</span></h1>
 
 ### Purpose
 
-This plugin provides an RGen API to use the Nexus protocol.
+This plugin provides an Origen API to use the Nexus protocol.
 
 This plugin supports Read/Write Access of system memory mapped resources,
-including IPS mapped registers via the conventional RGen Register API.
+including IPS mapped registers via the conventional Origen Register API.
 
 
 ### How To Import
 In your Gemfile add:
 
 ~~~ruby
-gem "rgen_nexus", ">= <%= RGen.app.version %>"
+gem "origen_nexus", ">= <%= Origen.app.version %>"
 ~~~
 
 or if your application is a plugin add this to your <code>.gemspec</code>
 
 ~~~ruby
-spec.add_development_dependency "rgen_nexus", ">= <%= RGen.app.version %>"
+spec.add_development_dependency "origen_nexus", ">= <%= Origen.app.version %>"
 ~~~
 
-__NOTE:__  You will also need to <code>require 'rgen_nexus'</code> somewhere in your environment.  This can be done in <code>config/environment.rb</code> for example.
+__NOTE:__  You will also need to <code>require 'origen_nexus'</code> somewhere in your environment.  This can be done in <code>config/environment.rb</code> for example.
 
 
 ### How To Use
 
-Include the <code>Nexus</code> module to add a Nexus driver to your class and
+Include the <code>OrigenNexus</code> module to add a Nexus driver to your class and
 define the required pins,
 normally the pins would be an alias to existing DUT pins and therefore the
 driver cannot assume them.
 
 Including the module adds a <code>nexus</code> method which will return an instance of
-[<code>Nexus::Driver</code>](<%= path "api/Nexus/Driver.html" %>).
+[<code>OrigenNexus::Driver</code>](<%= path "api/OrigenNexus/Driver.html" %>).
 
 The driver provides <code>read_register</code> and <code>write_register</code>
-methods that allow the driver to be easily hooked into the RGen register API.
+methods that allow the driver to be easily hooked into the Origen register API.
 
 The following attributes can be customized by defining a <code>NEXUS_CONFIG</code>
 hash:
@@ -58,10 +58,9 @@ Here is an example integration:
 ~~~ruby
 class Panther2
 
-  include Nexus
+  include OrigenNexus
 
-  include RGen::Pins
-  include RGen::Registers
+  include Origen::TopLevel
 
   # TCK covers 4 tester cycles, 2 high then 2 low for each effective TCK pulse
   # Strobe TDO only when TCK high.  Only store TDO on last cycle (3)
@@ -127,7 +126,7 @@ Panther2.new.reg(:testme32).write!(0x55AA55AA)  # => Will perform the write usin
 Panther2.new.reg(:testme32).bits(:portA).read!(0xAA)  # => Only the portA bits will be read
 ~~~
 
-Access to the underlying [JTAG](http://rgen.freescale.net/jtag/) hardware
+Access to the underlying [JTAG](http://origen-sdk.org/jtag/) hardware
 driver:
 
 ~~~ruby
@@ -156,68 +155,19 @@ nexus.read(0x1234, :address => 0x12)
 
 ### How To Setup a Development Environment
 
-~~~
-mkdir nexus
-cd nexus
-dssc setvault <%= RGen.app.config.vault %> .
-dssc pop -rec -get .
-~~~
+[Clone the repository from Github](https://github.com/Origen-SDK/origen_nexus).
 
 Some patterns can be found in the pattern directory to exercise the protocol.
 
 Follow the instructions here if you want to make a 3rd party app
-workspace use your development copy of the Nexus plugin:
-[Setting up a Library Development Environment](http://rgen.freescale.net/rgen/latest/guides/libraries/environment)
+workspace use your development copy of the OrigenNexus plugin:
+[Setting up a Plugin Development Environment](http://origen-sdk.org/origen/latest/guides/plugins)
 
 This plugin also contains a test suite, makes sure this passes before committing
 any changes!
 
+~~~text
+origen test
 ~~~
-rgen examples
-rgen specs
-~~~
-
-%# * [Docs](<%= path "/docs/environment/introduction" %>)
-%#
-%#### Code Examples
-%#
-%# In the course of writing documentation you will probably want to show code examples
-%# from time to time. Generic code snippets can be easily formatted with a mono-spaced
-%# font like this:
-%# 
-%# ~~~
-%# rgen t debug
-%# rgen g list/production.list
-%# ~~~
-%#
-%# If you are showing examples of Ruby then they can be easily syntax-highlighted for
-%# better presentation:
-%#
-%# ~~~ruby
-%# # Cool, this is easy
-%# def some_ruby
-%#   @blah = Blah.new
-%# end
-%# ~~~
-%#
-%# RGen uses the Coderay library for syntax highlighting and therefore should in theory
-%# be able to highlight all languages listed here: [CodeRay Syntax Highlighting](http://coderay.rubychan.de/)
-%# 
-%# ### Custom HTML
-%# 
-%# You may occasionally wish to have low level control of your documentation's HTML, this
-%# can be done by simply embedding the HTML directly alongside the Markdown.
-%#
-%# RGen already uses the [Twitter Bootstrap](http://twitter.github.io/bootstrap/index.html)
-%# framework to generate these documents, so you already have full access to the features
-%# provided by that framework.
-%# 
-%# For example here is how to insert a [Bootstrap alert](http://twitter.github.io/bootstrap/components.html#alerts):
-%# 
-%# 
-%# <div class="alert">
-%#   <button type="button" class="close" data-dismiss="alert">&times;</button>
-%#   <strong>Warning!</strong> This example was just copied directly from the bootstrap documentation!
-%# </div>
 
 % end

@@ -1,32 +1,24 @@
-class Nexus_Application < RGen::Application
+class OrigenNexusApplication < Origen::Application
 
   # This file contains examples of some of the most common configuration options,
   # to see a real production example from a large application have a look at:
-  # sync://sync-15088:15088/Projects/common_tester_blocks/blocks/C90TFS_NVM_tester/tool_data/rgen_v2/config/application.rb
+  # sync://sync-15088:15088/Projects/common_tester_blocks/blocks/C90TFS_NVM_tester/tool_data/origen_v2/config/application.rb
 
   # This information is used in headers and email templates, set it specific
   # to your application
-  config.name     = "Nexus"
-  config.initials = "Nexus"
-  config.vault    = "sync://sync-15088:15088/Projects/common_tester_blocks/rgen_blocks/protocol/Nexus/tool_data/rgen" 
+  config.name     = "Origen Nexus"
+  config.initials = "OrigenNexus"
+  config.rc_url   = "git@github.com:Origen-SDK/origen_nexus.git"
+  config.release_externally = true
 
-  # Force naming of gem
-  self.name = "rgen_nexus"
-
-  # To enable deployment of your documentation to a web server (via the 'rgen web'
-  # command) fill in these attributes. The example here is configured to deploy to
-  # the rgen.freescale.net domain, which is an easy option if you don't have another
-  # server already in mind. To do this you will need an account on CDE and be a member
-  # of the 'rgen' group.
-  config.web_directory = "/proj/.web_rgen/html/nexus"
-  config.web_domain = "http://rgen.freescale.net/nexus"
+  config.web_directory = "git@github.com:Origen-SDK/Origen-SDK.github.io.git/nexus"
+  config.web_domain = "http://origen-sdk.org/nexus"
 
   # You can map moo numbers to targets here, this allows targets to be selected via
-  # rgen t <moo>
+  # origen t <moo>
   #config.production_targets = {
   #  "1m79x" => "production",
   #}
-
 
   # Versioning is based on a timestamp by default, if you would rather use semantic
   # versioning, i.e. v1.0.0 format, then set this to true.
@@ -41,62 +33,56 @@ class Nexus_Application < RGen::Application
 
   # An example of how to add header comments to all generated patterns
   #config.pattern_header do
-  #  cc "This is a pattern created by the example rgen application"
+  #  cc "This is a pattern created by the example origen application"
   #end
 
   # By default all generated output will end up in ./output.
   # Here you can specify an alternative directory entirely, or make it dynamic such that
   # the output ends up in a setup specific directory. 
   #config.output_directory do
-  #  "#{RGen.root}/output/#{$dut.class}"
+  #  "#{Origen.root}/output/#{$dut.class}"
   #end
 
   # Similary for the reference files, generally you want to setup the reference directory
   # structure to mirror that of your output directory structure.
   #config.reference_directory do
-  #  "#{RGen.root}/.ref/#{$dut.class}"
+  #  "#{Origen.root}/.ref/#{$dut.class}"
   #end
 
   # Run code coverage when deploying the web site
   def before_deploy_site
-    Dir.chdir RGen.root do
-      system "rgen examples -c"
-      system "rgen specs -c"
-      dir = "#{RGen.root}/web/output/coverage"
+    Dir.chdir Origen.root do
+      system "origen examples -c"
+      system "origen specs -c"
+      dir = "#{Origen.root}/web/output/coverage"
       FileUtils.remove_dir(dir, true) if File.exists?(dir)
-      system "mv #{RGen.root}/coverage #{dir}"
+      system "mv #{Origen.root}/coverage #{dir}"
     end
   end
 
   # To automatically deploy your documentation after every tag use this code
   def after_release_email(tag, note, type, selector, options)
-    deployer = RGen.app.deployer
-    if deployer.running_on_cde? && deployer.user_belongs_to_rgen?
-      command = "rgen web compile --remote --api"
-      if RGen.app.version.production?
-        command += " --archive #{RGen.app.version}"
-      end
-      Dir.chdir RGen.root do
-        system command
-      end
-    end 
+    command = "origen web compile --remote --api"
+    Dir.chdir Origen.root do
+      system command
+    end
   end
 
 =begin
   # To enabled source-less pattern generation create a class (for example PatternDispatcher)
   # to generate the pattern. This should return false if the requested pattern has been
-  # dispatched, otherwise RGen will proceed with looking up a pattern source as normal.
+  # dispatched, otherwise Origen will proceed with looking up a pattern source as normal.
   #def before_pattern_lookup(requested_pattern)
   #  PatternDispatcher.new.dispatch_or_return(requested_pattern)
   #end
 
   # If you use pattern iterators you may come accross the case where you request a pattern
   # like this:
-  #   rgen g example_pat_b0.atp
+  #   origen g example_pat_b0.atp
   #
-  # However it cannot be found by RGen since the pattern name is actually example_pat_bx.atp
-  # In the case where the pattern cannot be found RGen will pass the name to this translator
-  # if it exists, and here you can make any substitutions to help RGen find the file you 
+  # However it cannot be found by Origen since the pattern name is actually example_pat_bx.atp
+  # In the case where the pattern cannot be found Origen will pass the name to this translator
+  # if it exists, and here you can make any substitutions to help Origen find the file you 
   # want. In this example any instances of _b\d, where \d means a number, are replaced by
   # _bx.
   #config.pattern_name_translator do |name|
@@ -105,7 +91,7 @@ class Nexus_Application < RGen::Application
 
   # If you want to use pattern iterators, that is the ability to generate multiple pattern
   # variants from a single source file, then you can define the required behavior here.
-  # The examples below implement some of the iterators that were available in RGen 1,
+  # The examples below implement some of the iterators that were available in Origen 1,
   # you can remove them if you don't want to use them, or of course modify or add new 
   # iterators specific to your application logic.
   
@@ -130,7 +116,7 @@ class Nexus_Application < RGen::Application
       end
     end
 
-    # Each pattern iteration needs a unique name, otherwise RGen will simply overwrite 
+    # Each pattern iteration needs a unique name, otherwise Origen will simply overwrite 
     # the same output file each time.
     # The base pattern name and the pattern argument, in this case the setting, will be
     # passed in here and whatever is returned is what will be used as the name.

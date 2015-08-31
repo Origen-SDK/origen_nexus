@@ -1,14 +1,14 @@
-module Nexus
+module OrigenNexus
   class Driver
     # Include JTAG driver instance to fall back on (if owner doesn't have)
-    include JTAG
+    include OrigenJTAG
 
     # Allow for JTAG optionality
     # blank for now
     JTAG_CONFIG = {}
 
     # Include registers as Nexus has its own registers
-    include RGen::Registers
+    include Origen::Registers
 
     alias_method :local_jtag, :jtag
 
@@ -298,7 +298,7 @@ module Nexus
       elsif  options[:width] == 64
         write_width = 0b11
       else
-        RGen.log.warn "Nexus 3 width supplied is invalid, defaulting to 32 bit width."
+        Origen.log.warn "Nexus 3 width supplied is invalid, defaulting to 32 bit width."
       end
         
       if options[:nexus_init]

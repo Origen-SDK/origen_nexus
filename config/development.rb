@@ -1,5 +1,5 @@
 # This file is similar to environment.rb and will be loaded
-# automatically at the start of each invocation of RGen.
+# automatically at the start of each invocation of Origen.
 #
 # However the major difference is that it will not be loaded
 # if the application is imported by a 3rd party app - in that
@@ -10,7 +10,7 @@
 # this would be used to define some dummy classes to instantiate
 # your objects so that they can be tested and/or interacted with
 # in the console.
-module Nexus
-  autoload :DUT,            "nexus/dut"
-  autoload :DUTWithJTAG,    "nexus/dut"
+module OrigenNexus
+  autoload :DUT,            "origen_nexus/dut"
+  autoload :DUTWithJTAG,    "origen_nexus/dut"
 end
