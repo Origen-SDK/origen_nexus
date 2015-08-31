@@ -28,4 +28,5 @@ Gem::Specification.new do |spec|
 
   spec.add_development_dependency "origen_jtag", ">= 0.12.0"
   spec.add_development_dependency "origen_doc_helpers", ">= 0.2.0"
+  spec.add_development_dependency "origen_testers", ">= 0.4.1"
 end

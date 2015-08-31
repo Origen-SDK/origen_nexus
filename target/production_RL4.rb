@@ -13,4 +13,4 @@
 # $dut.do_something_before_every_job
 
 $dut = OrigenNexus::DUT.new(:tclk_format => :rl, :tclk_multiple => 4, :tdo_store_cycle => 3)
-$tester = Origen::Tester::J750.new
+$tester = OrigenTesters::J750.new
