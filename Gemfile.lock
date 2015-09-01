@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    origen_nexus (0.6.0.pre6)
+    origen_nexus (0.8.0)
       origen (>= 0.2.6)
       origen_jtag (>= 0.12.0)
 

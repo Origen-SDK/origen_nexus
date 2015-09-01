@@ -1,8 +1,8 @@
 module OrigenNexus
   MAJOR = 0
-  MINOR = 6
+  MINOR = 8
   BUGFIX = 0
-  DEV = 6
+  DEV = nil
 
   VERSION = [MAJOR, MINOR, BUGFIX].join(".") + (DEV ? ".pre#{DEV}" : '')
 end
