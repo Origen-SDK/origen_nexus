@@ -3,6 +3,7 @@ PATH
   specs:
     origen_nexus (0.6.0.pre6)
       origen (>= 0.2.6)
+      origen_jtag (>= 0.12.0)
 
 GEM
   remote: https://rubygems.org/
@@ -171,6 +172,5 @@ DEPENDENCIES
   byebug (~> 3.5)
   coveralls
   origen_doc_helpers (>= 0.2.0)
-  origen_jtag (>= 0.12.0)
   origen_nexus!
   origen_testers (>= 0.4.1)
