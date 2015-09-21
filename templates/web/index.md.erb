@@ -9,7 +9,7 @@
 This plugin provides an Origen API to use the Nexus protocol.
 
 This plugin supports Read/Write Access of system memory mapped resources,
-including IPS mapped registers via the conventional Origen Register API.
+including registers via the conventional Origen Register API.
 
 
 ### How To Import
@@ -65,10 +65,10 @@ class Panther2
   # TCK covers 4 tester cycles, 2 high then 2 low for each effective TCK pulse
   # Strobe TDO only when TCK high.  Only store TDO on last cycle (3)
   NEXUS_CONFIG = {
-    :tclk_format => :rl,
-    :tclk_multiple => 4,
-    :tdo_strobe => :tclk_high,
-    :tdo_store_cycle => 3,
+    tclk_format:     :rl,
+    tclk_multiple:   4,
+    tdo_strobe:      :tclk_high,
+    tdo_store_cycle: 3
   }
 
   def initialize
@@ -78,10 +78,11 @@ class Panther2
     add_pin :tdo
     add_pin :tms
 
-    add_reg32 :testme32, 0x007a, :portA => {pos: 8, bits: 8},
-                                 :portB => {pos: 16, bits: 16},
-                                 :enable => {pos: 0}
-
+    reg :myreg, 0x007A, size: 32 do |reg|
+      reg.bits 31..16, :portb 
+      reg.bits 15..8,  :porta 
+      reg.bit  0, :enable
+    end
   end
 
   # Hook the Nexus module into the register API, any register read
@@ -107,49 +108,49 @@ class Panther2
 
   # Generate an overlay subroutine for a register
   def overlay_register(reg, options={})
-    if $tester.respond_to?('start_subroutine')
-      $tester.start_subroutine(options[:label])
+    if tester.respond_to?('start_subroutine')
+      tester.start_subroutine(options[:label])
     end
 
     nexus.write_data_only(reg, options)
 
-    if $tester.respond_to?('end_subroutine')
-      $tester.end_subroutine
+    if tester.respond_to?('end_subroutine')
+      tester.end_subroutine
     end
   end
 
 
 end
 
-Panther2.new.reg(:testme32).write!(0x55AA55AA)  # => Will perform the write using the Nexus protocol
+Panther2.new.myreg.write!(0x55AA55AA)  # => Will perform the write using the Nexus protocol
 
-Panther2.new.reg(:testme32).bits(:portA).read!(0xAA)  # => Only the portA bits will be read
+Panther2.new.myreg.bits(:portA).read!(0xAA)  # => Only the portA bits will be read
 ~~~
 
-Access to the underlying [JTAG](http://origen-sdk.org/jtag/) hardware
+Access to the underlying [OrigenJTAG](http://origen-sdk.org/jtag/) hardware
 driver:
 
 ~~~ruby
-nexus.jtag    # => an instance of JTAG::Driver
+nexus.jtag    # => an instance of OrigenJTAG::Driver
 ~~~
 
 The address can be overridden:
 
 ~~~ruby
 # Transform the default register address
-nexus.write_register(reg, :address => reg.address << 2)
+nexus.write_register(reg, address: reg.address << 2)
 ~~~
 
 The driver will also accept flat data values in place of a register.
 
-This can also be used to write to any IPS memory mapped location, even if not a register!
+This can also be used to write to any memory mapped location, even if not a register!
 
 ~~~ruby
-# Write 0x1234 to IPS address 0x12
-nexus.write(0x1234, :address => 0x12)
+# Write 0x1234 to address 0x12
+nexus.write(0x1234, address: 0x12)
 
-# Read and expect 0x1234 from IPS address 0x12
-nexus.read(0x1234, :address => 0x12)
+# Read and expect 0x1234 from address 0x12
+nexus.read(0x1234, address: 0x12)
 ~~~
 
 
@@ -161,7 +162,7 @@ Some patterns can be found in the pattern directory to exercise the protocol.
 
 Follow the instructions here if you want to make a 3rd party app
 workspace use your development copy of the OrigenNexus plugin:
-[Setting up a Plugin Development Environment](http://origen-sdk.org/origen/latest/guides/plugins)
+[Setting up a Plugin Development Environment](http://origen-sdk.org/origen/guides/plugins)
 
 This plugin also contains a test suite, makes sure this passes before committing
 any changes!
