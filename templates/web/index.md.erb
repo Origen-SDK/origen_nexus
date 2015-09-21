@@ -38,8 +38,8 @@ driver cannot assume them.
 Including the module adds a <code>nexus</code> method which will return an instance of
 [<code>OrigenNexus::Driver</code>](<%= path "api/OrigenNexus/Driver.html" %>).
 
-The driver provides <code>read_register</code> and <code>write_register</code>
-methods that allow the driver to be easily hooked into the Origen register API.
+The driver should be hooked up to the Origen register API by
+<code>read_register</code> and <code>write_register</code> methods as shown in the example below.
 
 The following attributes can be customized by defining a <code>NEXUS_CONFIG</code>
 hash:
